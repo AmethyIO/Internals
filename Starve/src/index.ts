@@ -2,7 +2,7 @@ import { addToDraw, draw, get, set } from './modules';
 import { BASE_HOOKS } from "./constants";
 import { globalObject, sleep } from './utils';
 import { getHookedVars, hook } from "./core";
-import { drawBase } from './drawers';
+import { drawBase, updateHooks } from './drawers';
 
 function readyCallback() {
   const vars = getHookedVars();
@@ -25,6 +25,7 @@ function readyCallback() {
 
   draw(0);
   addToDraw(drawBase);
+  addToDraw(updateHooks);
 
   console.log('ready', vars);
 }
