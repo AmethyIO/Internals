@@ -1,6 +1,6 @@
 import { DEV } from "@/constants";
 import { get } from "@/modules";
-import { globalObject, isArray } from "@/utils";
+import { getObjectTypeName, globalObject, isArray } from "@/utils";
 
 import type { Hook, ObjAny, StrAny } from "@/interfaces";
 
@@ -105,7 +105,7 @@ export function getObjectProperty(obj: any, defineAs: string, index: number = 1)
   const ready = get<boolean>('READY');
   if (!ready) throw new globalObject.ReferenceError('Game is not ready yet');
 
-  const objName: string = obj.constructor ? obj.constructor.name : obj;
+  const objName: string = getObjectTypeName(obj);
   if (!(objName in OBJ_PROPS))
     OBJ_PROPS[objName] = {};
 
