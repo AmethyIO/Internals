@@ -102,29 +102,32 @@ export function getVarProperty(hookedVar: string, defineAs: string, index: numbe
 const OBJ_PROPS: StrAny = {};
 
 export function getObjectProperty(obj: any, defineAs: string, index: number = 1): string | undefined {
-  console.log(OBJ_PROPS);
-
-  const ready = get<boolean>('READY') ?? false;
+  const ready = get<boolean>('READY');
   if (!ready) throw new globalObject.ReferenceError('Game is not ready yet');
 
-  if (!(defineAs in OBJ_PROPS)) {
+  const objName: string = obj.constructor ? obj.constructor.name : obj;
+  if (!(objName in OBJ_PROPS))
+    OBJ_PROPS[objName] = {};
+
+  const o = OBJ_PROPS[objName];
+
+  if (!(defineAs in o)) {
     let counter: number = 0;
     let property: string | undefined = undefined;
-
-    OBJ_PROPS[obj] = {};
-
+  
     for (const prop in obj) {
       counter++;
       if (counter === index) {
-        OBJ_PROPS[obj][index] = prop;
+        o[defineAs] = prop;
         property = prop;
         break;
       }
     }
+
     return property;
   }
 
-  return OBJ_PROPS[defineAs][index];
+  return o[defineAs];
 }
 
 export const getCameraPosition = (): number[] => {
