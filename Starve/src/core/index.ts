@@ -2,7 +2,7 @@ import { DEV } from "@/constants";
 import { get } from "@/modules";
 import { globalObject, isArray } from "@/utils";
 
-import type { Hook, StrAny } from "@/interfaces";
+import type { Hook, ObjAny, StrAny } from "@/interfaces";
 
 export function hook(hooks: [string, Hook][]): boolean {
   if (!isArray(hooks))
@@ -99,21 +99,32 @@ export function getVarProperty(hookedVar: string, defineAs: string, index: numbe
 //   }
 // }
 
-export function getObjectProperty(obj: Object, index: number = 1): string | undefined {
+const OBJ_PROPS: StrAny = {};
+
+export function getObjectProperty(obj: any, defineAs: string, index: number = 1): string | undefined {
+  console.log(OBJ_PROPS);
+
   const ready = get<boolean>('READY') ?? false;
   if (!ready) throw new globalObject.ReferenceError('Game is not ready yet');
 
-  let counter: number = 0;
-  let property: string | undefined = undefined;
+  if (!(defineAs in OBJ_PROPS)) {
+    let counter: number = 0;
+    let property: string | undefined = undefined;
 
-  for (const prop in obj) {
-    counter++;
-    if (counter === index) {
-      property = prop;
-      break;
+    OBJ_PROPS[obj] = {};
+
+    for (const prop in obj) {
+      counter++;
+      if (counter === index) {
+        OBJ_PROPS[obj][index] = prop;
+        property = prop;
+        break;
+      }
     }
+    return property;
   }
-  return property;
+
+  return OBJ_PROPS[defineAs][index];
 }
 
 export const getCameraPosition = (): number[] => {
@@ -136,6 +147,6 @@ export const getCameraPosition = (): number[] => {
       }
     }
   }
-  
+
   return [camx, camy];
 };

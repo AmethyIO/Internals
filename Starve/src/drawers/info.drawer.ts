@@ -198,16 +198,16 @@ export const drawPlayerInfo = (context: CanvasRenderingContext2D): void => {
     const player = players[index];
 
     if (player) {
-      const obj   = player[getObjectProperty(player, 14)!];
+      const obj     = player[getObjectProperty(player, 'UNIT_OBJ', 14)!];
       
       if (obj) {
-        const alive = obj[getObjectProperty(obj, 13)!];
+        const alive = obj[getObjectProperty(obj, 'PLAYER_ALIVE', 13)!];
         if (!alive) continue;
 
-        const x     = player[getObjectProperty(player, 4)!];
-        const y     = player[getObjectProperty(player, 5)!];
-        const pid   = player[getObjectProperty(player, 2)!];
-        const info  = player[getObjectProperty(player, 9)!];
+        const x     = player[getObjectProperty(player, 'UNIT_X', 4)!];
+        const y     = player[getObjectProperty(player, 'UNIT_Y', 5)!];
+        const pid   = player[getObjectProperty(player, 'UNIT_PID', 2)!];
+        const info  = player[getObjectProperty(player, 'UNIT_INFO', 9)!];
 
         // Drawing multiple infos
         let text_y = 0;
