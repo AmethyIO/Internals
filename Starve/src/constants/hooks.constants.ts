@@ -53,6 +53,7 @@ export const PROP_HOOKS = [
   // User hooks
   ['USER',    'ID',            16],
   ['USER',    'ALIVE',         11],
+  ['USER',    'CAMERA',        28],
   ['USER',    'INVENTORY',     35],
 
   // World hooks

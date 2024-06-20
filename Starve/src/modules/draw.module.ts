@@ -10,6 +10,9 @@ const frames: number[] = [];
 const drawFns: RenderFunction[] = [];
 
 export const draw = (timestamp: number = 0): void => {
+  const ready = get<boolean>('READY');
+  if (!ready) return;
+
   globalObject.requestAnimationFrame(draw);
 
   const ms = timestamp - last;

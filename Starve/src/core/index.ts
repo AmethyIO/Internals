@@ -35,7 +35,7 @@ export function hook(hooks: [string, Hook][]): boolean {
   return done;
 }
 
-const VARS: StrAny = {};
+export const VARS: StrAny = {};
 VARS.USER = undefined;
 VARS.GAME = undefined;
 VARS.WORLD = undefined;
@@ -50,15 +50,7 @@ export function setHookedVar(property: string, value: any): boolean {
   return true;
 }
 
-export function getHookedVars(): StrAny {
-  return VARS;
-}
-
-const PROPS: StrAny = {};
-
-export function getProps(): StrAny {
-  return PROPS;
-}
+export const PROPS: StrAny = {};
 
 export function getVarProperty(hookedVar: string, defineAs: string, index: number = 1): string {
   const ready = get<boolean>('READY') ?? false;
@@ -85,6 +77,28 @@ export function getVarProperty(hookedVar: string, defineAs: string, index: numbe
   return prop;
 }
 
+// export const OBJECTS_PROPS: StrAny = {};
+// export function getObjectProperty(object: any, defineAs: string, index: number = 1): string {
+//   const ready = get<boolean>('READY');
+//   if (!ready) throw new globalObject.ReferenceError('Game is not ready yet');
+//   let prop: string | undefined = undefined;
+//   let counter: number = 0;
+//   for (const property in object) {
+//     counter++;
+//     if (counter === index) {
+//       prop = property;
+//       break;
+//     }
+//   }
+//   if (typeof prop === 'string') {
+//     if (!(object in OBJECTS_PROPS))
+//       OBJECTS_PROPS[object] = {}
+//     const obj = OBJECTS_PROPS[object];
+//     if (!(defineAs in obj) || obj[defineAs] !== prop)
+//       obj[defineAs] = prop;
+//   }
+// }
+
 export function getObjectProperty(obj: Object, index: number = 1): string | undefined {
   const ready = get<boolean>('READY') ?? false;
   if (!ready) throw new globalObject.ReferenceError('Game is not ready yet');
@@ -94,12 +108,34 @@ export function getObjectProperty(obj: Object, index: number = 1): string | unde
 
   for (const prop in obj) {
     counter++;
-
     if (counter === index) {
       property = prop;
       break;
     }
   }
-
   return property;
 }
+
+export const getCameraPosition = (): number[] => {
+  let camx = 0;
+  let camy = 0;
+  const ready = get<boolean>('READY');
+
+  if (!VARS.USER[PROPS.ALIVE] || !ready)
+    return [camx, camy];
+
+  for (const prop1 in VARS.USER) {
+    for (const prop2 in VARS.USER[prop1]) {
+      switch (prop2) {
+        case "x":
+          camx = VARS.USER[prop1][prop2];
+          break;
+        case "y":
+          camy = VARS.USER[prop1][prop2];
+          break;
+      }
+    }
+  }
+  
+  return [camx, camy];
+};
