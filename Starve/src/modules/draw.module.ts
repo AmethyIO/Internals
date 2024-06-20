@@ -20,7 +20,7 @@ export const draw = (timestamp: number = 0): void => {
   frames.push(ms);
   if (frames.length > 100) frames.shift();
 
-  delta = (timestamp - last) / 1000;
+  delta = ms / 1000;
   delta = delta > 1 ? 1 : delta;
   last = timestamp;
   

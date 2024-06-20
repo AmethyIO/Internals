@@ -1,6 +1,6 @@
 import { UNITS } from "@/constants";
 import { VARS, PROPS, getObjectProperty, getCameraPosition } from "@/core";
-import { isArray } from "@/utils";
+import { getReadableTime, isArray } from "@/utils";
 
 // {
 //   "type": 0, // 1
@@ -167,9 +167,11 @@ const infos = {
       "Info: [info]"
     ]
   },
-  [UNITS.EXTRACTOR_MACHINE_AMETHYST]: {
+  ['extractor']: {
     ['strings']: [
-      "Extractor ID: [pid]",
+      "Wood: [input]",
+      "[type]: [output]",
+      "Est. time: [time]",
     ]
   }
 };
@@ -233,46 +235,84 @@ export const drawPlayerInfo = (context: CanvasRenderingContext2D): void => {
   context.restore();
 };
 
-// export const drawInfos = (context: CanvasRenderingContext2D): void => {
-//   if (!VARS.USER[PROPS.ALIVE])
-//     return;
-//   const [camX, camY] = getCameraPosition();
-//   const units = VARS.WORLD[PROPS.UNITS];
-//   if (!units || !isArray(units))
-//     return;
-//   const u_length = units.length;
-//   context.save();
-//   context.font = '19px Baloo Paaji';
-//   context.lineWidth = 6;
-//   context.fillStyle = 'white';
-//   context.strokeStyle = 'black';
-//   for (let i = 0; i < u_length; i++) {
-//     const unit = units[i];
-//     if (!unit || !isArray(unit))
-//       continue;
-//     const length = unit.length;
-//     for (let j = 0; j < length; j++) {
-//       const item = unit[j];
-//       if (item) {
-//         const type = item[getObjectProperty(item, 1)!];
-//         if (type in infos) {
-//           const x = item[getObjectProperty(item, 4)!];
-//           const y = item[getObjectProperty(item, 5)!];
-//           const pid = item[getObjectProperty(item, 2)!];
-//           const _info = infos[type];
-//           if (_info.strings.length > 0) {
-//             let _y = 0;
-//             for (let k = 0; k < _info.strings.length; k++) {
-//               let info = _info.strings[k];
-//               info = info.replace('[pid]', pid);
-//               context.strokeText(info, (x - 20) + camX, y + camY + _y);
-//               context.fillText(info, (x - 20) + camX, y + camY + _y);
-//               _y += 22.2;
-//             }
-//           }
-//         }
-//       }
-//     }
-//   }
-//   context.restore();
-// };
+const extras: number[] = [
+  UNITS.EXTRACTOR_MACHINE_STONE,
+  UNITS.EXTRACTOR_MACHINE_GOLD,
+  UNITS.EXTRACTOR_MACHINE_DIAMOND,
+  UNITS.EXTRACTOR_MACHINE_AMETHYST,
+  UNITS.EXTRACTOR_MACHINE_REIDITE
+];
+const extras_length: number = extras.length;
+
+function getExtractorTypeName(type: number): string {
+  switch (type) {
+    case UNITS.EXTRACTOR_MACHINE_STONE:     return 'Stone';
+    case UNITS.EXTRACTOR_MACHINE_GOLD:      return 'Gold';
+    case UNITS.EXTRACTOR_MACHINE_DIAMOND:   return 'Diamond';
+    case UNITS.EXTRACTOR_MACHINE_AMETHYST:  return 'Amethyst';
+    case UNITS.EXTRACTOR_MACHINE_REIDITE:   return 'Reidite';
+  }
+
+  return 'Unknown';
+}
+
+export const drawExtractorInfo = (context: CanvasRenderingContext2D): void => {
+  if (!VARS.USER[PROPS.ALIVE]) return;
+
+  const [cam_x, cam_y] = getCameraPosition();
+
+  const units = VARS.WORLD[PROPS.UNITS];
+  if (!isArray(units) || units.length === 0) return;
+
+  context.save();
+  context.font = '16px Baloo Paaji';
+  context.lineWidth = 2;
+  context.fillStyle = 'white';
+  context.strokeStyle = 'black';
+
+  for (let i = 0; i < extras_length; i++) {
+    const extra = extras[i];
+
+    const extractors = units[extra];
+    if (!extractors || !isArray(extractors))
+      continue;
+
+    const extractors_length = extractors.length;
+
+    for (let j = 0; j < extractors_length; j++) {
+      const extractor = extractors[j];
+
+      if (extractor) {
+        const x     = extractor[getObjectProperty(extractor, 'UNIT_X', 4)!];
+        const y     = extractor[getObjectProperty(extractor, 'UNIT_Y', 5)!];
+        const type  = extractor[getObjectProperty(extractor, 'UNIT_TYPE', 1)!];
+        const info  = extractor[getObjectProperty(extractor, 'UNIT_INFO', 9)!];
+
+        const input = info & 0xFF;
+        const output = (info & 0xFF00) >> 8;
+
+        const time = getReadableTime(input > 0 ? (((input / 2) * 10) / 60) : 0);
+        
+        // Drawing multiple infos
+        let text_y = 0;
+        const text = infos['extractor']['strings'];
+        const text_length = text.length;
+        if (text_length > 0) {
+          for (let j = 0; j < text_length; j++) {
+            const t = text[j]
+              .replace('[type]', getExtractorTypeName(type))
+              .replace('[time]', time)
+              .replace('[input]', 'x' + input)
+              .replace('[output]', 'x' + output)
+
+            context.strokeText(t, (x - 20) + cam_x, y + cam_y + text_y);
+            context.fillText(t, (x - 20) + cam_x, y + cam_y + text_y);
+            text_y += 16;
+          }
+        }
+      }
+    }
+  }
+
+  context.restore();
+}

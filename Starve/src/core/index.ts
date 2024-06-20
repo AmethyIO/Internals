@@ -99,7 +99,7 @@ export function getVarProperty(hookedVar: string, defineAs: string, index: numbe
 //   }
 // }
 
-const OBJ_PROPS: StrAny = {};
+export const OBJ_PROPS: StrAny = {};
 
 export function getObjectProperty(obj: any, defineAs: string, index: number = 1): string | undefined {
   const ready = get<boolean>('READY');
