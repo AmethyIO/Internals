@@ -194,6 +194,7 @@ export const drawPlayerInfo = (context: CanvasRenderingContext2D): void => {
   context.font = '19px Baloo Paaji';
   context.lineWidth = 4;
   context.fillStyle = 'white';
+  context.textAlign = 'center';
   context.strokeStyle = 'black';
 
   for (let index = 0; index < players_length; index++) {
@@ -223,8 +224,8 @@ export const drawPlayerInfo = (context: CanvasRenderingContext2D): void => {
               .replace('[pid]', pid)
               .replace('[info]', info)
 
-            context.strokeText(t, (x - 20) + cam_x, y + cam_y + text_y);
-            context.fillText(t, (x - 20) + cam_x, y + cam_y + text_y);
+            context.strokeText(t, x + cam_x, y + cam_y + text_y);
+            context.fillText(t, x + cam_x, y + cam_y + text_y);
             text_y += 22;
           }
         }
@@ -268,6 +269,7 @@ export const drawExtractorInfo = (context: CanvasRenderingContext2D): void => {
   context.font = '16px Baloo Paaji';
   context.lineWidth = 2;
   context.fillStyle = 'white';
+  context.textAlign = 'center';
   context.strokeStyle = 'black';
 
   for (let i = 0; i < extras_length; i++) {
@@ -305,8 +307,8 @@ export const drawExtractorInfo = (context: CanvasRenderingContext2D): void => {
               .replace('[input]', 'x' + input)
               .replace('[output]', 'x' + output)
 
-            context.strokeText(t, (x - 20) + cam_x, y + cam_y + text_y);
-            context.fillText(t, (x - 20) + cam_x, y + cam_y + text_y);
+            context.strokeText(t, x + cam_x, y + cam_y + text_y);
+            context.fillText(t, x + cam_x, y + cam_y + text_y);
             text_y += 16;
           }
         }
