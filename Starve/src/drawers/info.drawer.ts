@@ -1,8 +1,6 @@
 import { UNITS } from "@/constants";
 import { VARS, PROPS, getObjectProperty, getCameraPosition } from "@/core";
-import type { StrAny } from "@/interfaces";
 import { isArray } from "@/utils";
-import { get } from "@/modules";
 
 // {
 //   "type": 0, // 1
@@ -164,65 +162,68 @@ import { get } from "@/modules";
 
 const infos = {
   [UNITS.PLAYERS]: {
-    strings: [
-      "Player ID: [pid]",
+    ['strings']: [
+      "PID: [pid]",
+      "Info: [info]"
     ]
   },
   [UNITS.EXTRACTOR_MACHINE_AMETHYST]: {
-    strings: [
+    ['strings']: [
       "Extractor ID: [pid]",
     ]
   }
 };
 
-export const drawInfos = (context: CanvasRenderingContext2D): void => {
-  if (!VARS.USER[PROPS.ALIVE])
-    return;
+export const drawPlayerInfo = (context: CanvasRenderingContext2D): void => {
+  if (!VARS.USER[PROPS.ALIVE]) return;
 
-  const [camX, camY] = getCameraPosition();
+  const [cam_x, cam_y] = getCameraPosition();
 
   const units = VARS.WORLD[PROPS.UNITS];
-  if (!units || !isArray(units))
-    return;
+  if (!isArray(units) || units.length === 0) return;
 
-  const u_length = units.length;
+  const players = units[UNITS.PLAYERS];
+  if (!isArray(players) || !players) return;
+
+  const players_length: number = players.length;
+  if (players_length === 0) return;
 
   context.save();
   context.font = '19px Baloo Paaji';
-  context.lineWidth = 6;
+  context.lineWidth = 4;
   context.fillStyle = 'white';
   context.strokeStyle = 'black';
 
-  for (let i = 0; i < u_length; i++) {
-    const unit = units[i];
-    if (!unit || !isArray(unit))
-      continue;
+  for (let index = 0; index < players_length; index++) {
+    const player = players[index];
 
-    const length = unit.length;
+    if (player) {
+      const obj   = player[getObjectProperty(player, 14)!];
+      
+      if (obj) {
+        const alive = obj[getObjectProperty(obj, 13)!];
+        if (!alive) continue;
 
-    for (let j = 0; j < length; j++) {
-      const item = unit[j];
+        const x     = player[getObjectProperty(player, 4)!];
+        const y     = player[getObjectProperty(player, 5)!];
+        const pid   = player[getObjectProperty(player, 2)!];
+        const info  = player[getObjectProperty(player, 9)!];
 
-      if (item) {
-        const type = item[getObjectProperty(item, 1)!];
+        // Drawing multiple infos
+        let text_y = 0;
 
-        if (type in infos) {
-          const x = item[getObjectProperty(item, 4)!];
-          const y = item[getObjectProperty(item, 5)!];
-          const pid = item[getObjectProperty(item, 2)!];
-          const _info = infos[type];
+        const text = infos[UNITS.PLAYERS]['strings'];
+        const text_length = text.length;
 
-          if (_info.strings.length > 0) {
-            let _y = 0;
+        if (text_length > 0) {
+          for (let j = 0; j < text_length; j++) {
+            const t = text[j]
+              .replace('[pid]', pid)
+              .replace('[info]', info)
 
-            for (let k = 0; k < _info.strings.length; k++) {
-              let info = _info.strings[k];
-              info = info.replace('[pid]', pid);
-
-              context.strokeText(info, (x - 20) + camX, y + camY + _y);
-              context.fillText(info, (x - 20) + camX, y + camY + _y);
-              _y += 22.2;
-            }
+            context.strokeText(t, (x - 20) + cam_x, y + cam_y + text_y);
+            context.fillText(t, (x - 20) + cam_x, y + cam_y + text_y);
+            text_y += 22;
           }
         }
       }
@@ -230,34 +231,48 @@ export const drawInfos = (context: CanvasRenderingContext2D): void => {
   }
 
   context.restore();
-  // const players: StrAny[] = units[UNITS.PLAYERS];
-  // if (!players || !isArray(players))
-  //   return;
-
-  // const length = players.length;
-  // if (length === 0)
-  //   return;
-
-  // const [ camX, camY ] = getCameraPosition();
-
-  // for (let i = 0; i < length; i++) {
-  //   const player = players[i];
-
-  //   if (player) {
-  //     const x = player[getObjectProperty(player, 4)!];
-  //     const y = player[getObjectProperty(player, 5)!];
-  //     const pid = player[getObjectProperty(player, 2)!];
-
-  //     const info_str = `Player ID: ${pid}`;
-
-  //     context.save();
-  //     context.font = '19px Baloo Paaji';
-  //     context.lineWidth = 6;
-  //     context.fillStyle = 'white';
-  //     context.strokeStyle = 'black';
-  //     context.strokeText(info_str, x + camX, y + camY);
-  //     context.fillText(info_str, x + camX, y + camY);
-  //     context.restore();
-  //   }
-  // }
 };
+
+// export const drawInfos = (context: CanvasRenderingContext2D): void => {
+//   if (!VARS.USER[PROPS.ALIVE])
+//     return;
+//   const [camX, camY] = getCameraPosition();
+//   const units = VARS.WORLD[PROPS.UNITS];
+//   if (!units || !isArray(units))
+//     return;
+//   const u_length = units.length;
+//   context.save();
+//   context.font = '19px Baloo Paaji';
+//   context.lineWidth = 6;
+//   context.fillStyle = 'white';
+//   context.strokeStyle = 'black';
+//   for (let i = 0; i < u_length; i++) {
+//     const unit = units[i];
+//     if (!unit || !isArray(unit))
+//       continue;
+//     const length = unit.length;
+//     for (let j = 0; j < length; j++) {
+//       const item = unit[j];
+//       if (item) {
+//         const type = item[getObjectProperty(item, 1)!];
+//         if (type in infos) {
+//           const x = item[getObjectProperty(item, 4)!];
+//           const y = item[getObjectProperty(item, 5)!];
+//           const pid = item[getObjectProperty(item, 2)!];
+//           const _info = infos[type];
+//           if (_info.strings.length > 0) {
+//             let _y = 0;
+//             for (let k = 0; k < _info.strings.length; k++) {
+//               let info = _info.strings[k];
+//               info = info.replace('[pid]', pid);
+//               context.strokeText(info, (x - 20) + camX, y + camY + _y);
+//               context.fillText(info, (x - 20) + camX, y + camY + _y);
+//               _y += 22.2;
+//             }
+//           }
+//         }
+//       }
+//     }
+//   }
+//   context.restore();
+// };

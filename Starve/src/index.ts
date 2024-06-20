@@ -2,8 +2,7 @@ import { addToDraw, draw, get, set } from './modules';
 import { BASE_HOOKS, PROP_HOOKS } from "./constants";
 import { globalObject, isArray, sleep } from './utils';
 import { VARS, PROPS, getVarProperty, hook } from "./core";
-import { drawBase, updateHooks } from './drawers';
-import { drawInfos } from './drawers/info.drawer';
+import { drawBase, updateHooks, drawPlayerInfo } from './drawers';
 
 function hookAllProperties() {
   const length = PROP_HOOKS.length;
@@ -46,8 +45,8 @@ function readyCallback() {
   draw(0);
 
   addToDraw(drawBase);
-  addToDraw(drawInfos);
   addToDraw(updateHooks);
+  addToDraw(drawPlayerInfo);
 
   hookAllProperties();
 
