@@ -419,6 +419,21 @@ export const infos = {
       'Info: $info'
     ]
   },
+  [UNITS.WINDMILL]: {
+    ['strings']: [
+      'Wheat: $input',
+      'Flour: $output',
+      'Est. time: $time',
+    ]
+  },
+  [UNITS.BREAD_OVEN]: {
+    ['strings']: [
+      'Wood: $input',
+      'Flour: $input2',
+      'Bread: $output',
+      'Est. time: $time',
+    ]
+  },
   [UNITS.EMERALD_MACHINE]: {
     ['strings']: [
       '$owner',

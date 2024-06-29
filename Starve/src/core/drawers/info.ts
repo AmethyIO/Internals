@@ -241,3 +241,113 @@ export function drawEmeraldInfo(context: CanvasRenderingContext2D): void {
 
   context.restore();
 }
+
+export function drawWindmillInfo(context: CanvasRenderingContext2D): void {
+  if (!VARS.USER[PROPS.ALIVE]) return;
+
+  const [cam_x, cam_y] = getCameraPosition();
+
+  const units = VARS.WORLD[PROPS.UNITS];
+  if (!isArray(units) || units.length === 0) return;
+
+  const windmills = units[UNITS.WINDMILL];
+  if (!isArray(windmills) || !windmills) return;
+
+  const windmills_length: number = windmills.length;
+  if (windmills_length === 0) return;
+
+  context.save();
+  context.font = '16px Baloo Paaji';
+  context.lineWidth = 2;
+  context.fillStyle = 'white';
+  context.textAlign = 'center';
+  context.strokeStyle = 'black';
+
+  for (let i = 0; i < windmills_length; i++) {
+    const windmill = windmills[i];
+
+    if (windmill) {
+      const x = windmill[getObjectProperty(windmill, 'UNIT_X', 4)!];
+      const y = windmill[getObjectProperty(windmill, 'UNIT_Y', 5)!];
+      const info = windmill[getObjectProperty(windmill, 'UNIT_INFO', 9)!];
+
+      const input = info & 0xFF;
+      const output = (info & 0xFF00) >> 8;
+      const time = getReadableTime(input > 0 ? (((input / 2) * 10) / 60) : 0);
+
+      let text_y = 0;
+      const text = infos[UNITS.WINDMILL]['strings'];
+      const text_length = text.length;
+      if (text_length > 0) {
+        for (let j = 0; j < text_length; j++) {
+          const t = text[j]
+            .replace('$time', time)
+            .replace('$input', 'x' + input)
+            .replace('$output', 'x' + output)
+
+          context.strokeText(t, x + cam_x, y + cam_y + text_y);
+          context.fillText(t, x + cam_x, y + cam_y + text_y);
+          text_y += 16;
+        }
+      }
+    }
+  }
+
+  context.restore();
+}
+
+export function drawOvenInfo(context: CanvasRenderingContext2D): void {
+  if (!VARS.USER[PROPS.ALIVE]) return;
+
+  const [cam_x, cam_y] = getCameraPosition();
+
+  const units = VARS.WORLD[PROPS.UNITS];
+  if (!isArray(units) || units.length === 0) return;
+
+  const ovens = units[UNITS.BREAD_OVEN];
+  if (!isArray(ovens) || !ovens) return;
+
+  const ovens_length: number = ovens.length;
+  if (ovens_length === 0) return;
+
+  context.save();
+  context.font = '16px Baloo Paaji';
+  context.lineWidth = 2;
+  context.fillStyle = 'white';
+  context.textAlign = 'center';
+  context.strokeStyle = 'black';
+
+  for (let i = 0; i < ovens_length; i++) {
+    const oven = ovens[i];
+
+    if (oven) {
+      const x = oven[getObjectProperty(oven, 'UNIT_X', 4)!];
+      const y = oven[getObjectProperty(oven, 'UNIT_Y', 5)!];
+      const info = oven[getObjectProperty(oven, 'UNIT_INFO', 9)!];
+
+      const input = info & 0x1F;
+      const input2 = (info & 0x3E0) >> 5;
+      const output = (info & 0x7C00) >> 10;
+      const time = getReadableTime(input > 0 ? (((input / 2) * 10) / 60) : 0);
+
+      let text_y = 0;
+      const text = infos[UNITS.BREAD_OVEN]['strings'];
+      const text_length = text.length;
+      if (text_length > 0) {
+        for (let j = 0; j < text_length; j++) {
+          const t = text[j]
+            .replace('$time', time)
+            .replace('$input', 'x' + input)
+            .replace('$input2', 'x' + input2)
+            .replace('$output', 'x' + output)
+
+          context.strokeText(t, x + cam_x, y + cam_y + text_y);
+          context.fillText(t, x + cam_x, y + cam_y + text_y);
+          text_y += 16;
+        }
+      }
+    }
+  }
+
+  context.restore();
+}

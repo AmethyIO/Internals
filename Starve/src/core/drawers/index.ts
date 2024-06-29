@@ -1,5 +1,5 @@
 import { updateCameraPosition, updatePlayers } from '../hooks';
-import { drawEmeraldInfo, drawExtractorInfo, drawPlayerInfo, drawTotemInfo } from './info';
+import { drawEmeraldInfo, drawExtractorInfo, drawOvenInfo, drawPlayerInfo, drawTotemInfo, drawWindmillInfo } from './info';
 import { drawBase } from './main';
 import { updateHooks } from './update';
 
@@ -12,8 +12,10 @@ export const DRAWERS = [
 
   // Actual draw things
   drawBase,
+  drawOvenInfo,
   drawTotemInfo,
   drawPlayerInfo,
   drawEmeraldInfo,
+  drawWindmillInfo,
   drawExtractorInfo,
 ];
