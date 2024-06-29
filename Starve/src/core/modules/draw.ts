@@ -3,6 +3,17 @@ import { globalObject } from '@/core/utils';
 
 type RenderFunction = (context: CanvasRenderingContext2D, delta: number) => void;
 
+let can: HTMLCanvasElement | undefined = undefined;
+let ctx: CanvasRenderingContext2D | undefined = undefined;
+
+export function initializeCanvas(): boolean {
+  if (!can || typeof can === 'undefined')
+    can = globalObject.document.getElementById('game_canvas')! as HTMLCanvasElement;
+
+  ctx = can.getContext('2d')!;
+  return !!can;
+}
+
 let last: number = 0;
 let delta: number = 0;
 
@@ -25,8 +36,7 @@ export function draw (timestamp: number = 0): void {
 
   last = timestamp;
   
-  const context = get<CanvasRenderingContext2D>('CONTEXT');
-  for (const render of drawFns) render(context!, delta);
+  for (const render of drawFns) render(ctx!, delta);
 };
 
 export function addToDraw (renderFunction: RenderFunction): void {

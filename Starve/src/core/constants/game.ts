@@ -401,20 +401,20 @@ export function getExtractorTypeName(type: number): string {
 export const infos = {
   [UNITS.PLAYERS]: {
     ['strings']: [
-      'PID: [pid]',
-      'Info: [info]'
+      'PID: $pid',
+      'Info: $info'
     ]
   },
   [UNITS.EMERALD_MACHINE]: {
     ['strings']: [
-      '[owner]',
+      '$owner',
     ]
   },
   ['extractor']: {
     ['strings']: [
-      'Wood: [input]',
-      '[type]: [output]',
-      'Est. time: [time]',
+      'Wood: $input',
+      '$type: $output',
+      'Est. time: $time',
     ]
   }
 };

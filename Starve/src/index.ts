@@ -1,6 +1,6 @@
-import { addToDraw, draw, get, set } from './core/modules';
+import { addToDraw, draw, get, initializeCanvas, set } from './core/modules';
 import { BASE_HOOKS, hookAllProperties } from './core/constants';
-import { globalObject, sleep } from './core/utils';
+import { sleep } from './core/utils';
 import { VARS, PROPS, hook } from './core';
 import { DRAWERS } from './core/drawers';
 
@@ -18,24 +18,13 @@ function applyDraws() {
 
 function readyCallback() {
   const ready = get<boolean>('READY');
-  const canvas = get<HTMLCanvasElement>('CANVAS');
-  if (!canvas)
-    set<HTMLCanvasElement>(
-      'CANVAS',
-      globalObject.document.getElementById('game_canvas') as HTMLCanvasElement
-    );
 
   if (!ready && (VARS.USER !== undefined && VARS.GAME !== undefined && VARS.WORLD !== undefined && VARS.CLIENT !== undefined)) {
     set<boolean>('READY', true);
-
-    set<CanvasRenderingContext2D>(
-      'CONTEXT',
-      canvas?.getContext('2d')!
-    );
   } else return;
 
+  initializeCanvas();
   draw(0);
-
   applyDraws();
   hookAllProperties();
 

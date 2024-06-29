@@ -62,8 +62,8 @@ export function drawPlayerInfo (context: CanvasRenderingContext2D): void {
         if (text_length > 0) {
           for (let j = 0; j < text_length; j++) {
             const t = text[j]
-              .replace('[pid]', pid)
-              .replace('[info]', info)
+              .replace('$pid', pid)
+              .replace('$info', info)
 
             context.strokeText(t, x + cam_x, y + cam_y + text_y);
             context.fillText(t, x + cam_x, y + cam_y + text_y);
@@ -122,10 +122,10 @@ export function drawExtractorInfo (context: CanvasRenderingContext2D): void {
         if (text_length > 0) {
           for (let j = 0; j < text_length; j++) {
             const t = text[j]
-              .replace('[type]', getExtractorTypeName(type))
-              .replace('[time]', time)
-              .replace('[input]', 'x' + input)
-              .replace('[output]', 'x' + output)
+              .replace('$type', getExtractorTypeName(type))
+              .replace('$time', time)
+              .replace('$input', 'x' + input)
+              .replace('$output', 'x' + output)
 
             context.strokeText(t, x + cam_x, y + cam_y + text_y);
             context.fillText(t, x + cam_x, y + cam_y + text_y);
