@@ -82,7 +82,8 @@
   "copyright": "2024",
   "target": "web",
   "dependencies": {
-    "devtools-detector": "^2.0.17",
+    "@types/node": "^20.14.6",
+    "devtools-detector": "^2.0.18",
     "goober": "^2.1.14"
   }
 }

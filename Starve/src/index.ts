@@ -1,33 +1,25 @@
-import { addToDraw, draw, get, set } from './modules';
-import { BASE_HOOKS, PROP_HOOKS } from "./constants";
-import { globalObject, isArray, sleep } from './utils';
-import { VARS, PROPS, getVarProperty, hook, OBJ_PROPS } from "./core";
-import { drawBase, updateHooks, drawPlayerInfo, drawExtractorInfo } from './drawers';
+import { addToDraw, draw, get, set } from './core/modules';
+import { BASE_HOOKS, hookAllProperties } from './core/constants';
+import { globalObject, sleep } from './core/utils';
+import { VARS, PROPS, hook } from './core';
+import { DRAWERS } from './core/drawers';
 
-function hookAllProperties() {
-  const length = PROP_HOOKS.length;
+function applyDraws() {
+  const len = DRAWERS.length;
+  for (let i = 0; i < len; i++) {
+    const draw = DRAWERS[i];
+    
+    if (typeof draw !== 'function')
+      continue;
 
-  for (let index: number = 0; index < length; index++) {
-    const hookProp = PROP_HOOKS[index];
-
-    if (hookProp && isArray(hookProp)) {
-      const [ variable, property, address ] = hookProp;
-
-      const hooked = getVarProperty(
-        variable as string,
-        property as string,
-        address as number
-      );
-
-      if (!!hooked) console.log(`found ${variable}.${property} in address ${address} (${hooked})`);
-    }
+    addToDraw(draw);
   }
 }
 
 function readyCallback() {
   const ready = get<boolean>('READY');
   const canvas = get<HTMLCanvasElement>('CANVAS');
-  if (!canvas) 
+  if (!canvas)
     set<HTMLCanvasElement>(
       'CANVAS',
       globalObject.document.getElementById('game_canvas') as HTMLCanvasElement
@@ -44,16 +36,12 @@ function readyCallback() {
 
   draw(0);
 
-  addToDraw(drawBase);
-  addToDraw(updateHooks);
-  addToDraw(drawPlayerInfo);
-  addToDraw(drawExtractorInfo);
-
+  applyDraws();
   hookAllProperties();
 
-  setInterval(() => {
-    console.log(OBJ_PROPS);
-  }, 1000);
+  // setInterval(() => {
+  //   console.log(OBJ_PROPS);
+  // }, 1000);
 
   console.log('ready', VARS, PROPS);
 }
@@ -69,10 +57,13 @@ async function waitUntilReady() {
   }
 }
 
-async function bootstrap () {
-  hook(BASE_HOOKS);
-
-  await waitUntilReady();
+async function bootstrap() {
+  // if (process.env.NODE_ENV === 'production')
+  
+  if (/*!devtools.isOpen*/ true) {
+    hook(BASE_HOOKS);
+    await waitUntilReady();
+  }
 }
 
 bootstrap();

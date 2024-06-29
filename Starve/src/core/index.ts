@@ -1,8 +1,6 @@
-import { DEV } from "@/constants";
-import { get } from "@/modules";
-import { getObjectTypeName, globalObject, isArray } from "@/utils";
-
-import type { Hook, ObjAny, StrAny } from "@/interfaces";
+import { get } from '@/core/modules';
+import { getObjectTypeName, globalObject, isArray } from '@/core/utils';
+import type { Hook, StrAny } from '@/core/types';
 
 export function hook(hooks: [string, Hook][]): boolean {
   if (!isArray(hooks))
@@ -29,8 +27,6 @@ export function hook(hooks: [string, Hook][]): boolean {
   }
 
   if (hooked === length && !done) done = true;
-
-  if (DEV && done) globalObject.console.log(`Successfully hooked ${length} properties`);
 
   return done;
 }
@@ -59,45 +55,28 @@ export function getVarProperty(hookedVar: string, defineAs: string, index: numbe
   if (typeof VARS[hookedVar] === 'undefined' || !(hookedVar in VARS))
     throw new globalObject.ReferenceError(`Cannot get var '${hookedVar}': ${!(hookedVar in VARS) ? 'var not found' : 'var not defined yet'}`);
 
-  let prop: string = '';
-  let counter: number = 0;
+  if (!(defineAs in PROPS))
+    PROPS[defineAs] = undefined;
+  
+  if (typeof PROPS[defineAs] === 'undefined') {
+    let prop: string = '';
+    let counter: number = 0;
 
-  for (const property in VARS[hookedVar]) {
-    counter++;
+    for (const property in VARS[hookedVar]) {
+      counter++;
 
-    if (counter === index) {
-      if ((typeof defineAs === 'string' && !(defineAs in PROPS)) || PROPS[defineAs] !== property)
+      if (counter === index) {
         PROPS[defineAs] = property;
-
-      prop = property;
-      break;
+        prop = property;
+        break;
+      }
     }
+
+    return prop;
   }
 
-  return prop;
+  return PROPS[defineAs];
 }
-
-// export const OBJECTS_PROPS: StrAny = {};
-// export function getObjectProperty(object: any, defineAs: string, index: number = 1): string {
-//   const ready = get<boolean>('READY');
-//   if (!ready) throw new globalObject.ReferenceError('Game is not ready yet');
-//   let prop: string | undefined = undefined;
-//   let counter: number = 0;
-//   for (const property in object) {
-//     counter++;
-//     if (counter === index) {
-//       prop = property;
-//       break;
-//     }
-//   }
-//   if (typeof prop === 'string') {
-//     if (!(object in OBJECTS_PROPS))
-//       OBJECTS_PROPS[object] = {}
-//     const obj = OBJECTS_PROPS[object];
-//     if (!(defineAs in obj) || obj[defineAs] !== prop)
-//       obj[defineAs] = prop;
-//   }
-// }
 
 export const OBJ_PROPS: StrAny = {};
 
@@ -129,27 +108,3 @@ export function getObjectProperty(obj: any, defineAs: string, index: number = 1)
 
   return o[defineAs];
 }
-
-export const getCameraPosition = (): number[] => {
-  let camx = 0;
-  let camy = 0;
-  const ready = get<boolean>('READY');
-
-  if (!VARS.USER[PROPS.ALIVE] || !ready)
-    return [camx, camy];
-
-  for (const prop1 in VARS.USER) {
-    for (const prop2 in VARS.USER[prop1]) {
-      switch (prop2) {
-        case "x":
-          camx = VARS.USER[prop1][prop2];
-          break;
-        case "y":
-          camy = VARS.USER[prop1][prop2];
-          break;
-      }
-    }
-  }
-
-  return [camx, camy];
-};

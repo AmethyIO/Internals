@@ -1,3 +1,4 @@
+// inventory items
 export const INVENTORY_ID = {
   'SWORD': 0,
   'PICK': 1,
@@ -267,6 +268,7 @@ export const INVENTORY_ID = {
   'FUR_MAMMOTH': 240
 };
 
+// units
 export const UNITS = {
   'PLAYERS': 0,
   'FIRE': 1,
@@ -360,6 +362,7 @@ export const UNITS = {
   'FRUIT': 100
 };
 
+// states
 export const STATES = {
   'DELETE': 1,
   'HURT': 2,
@@ -370,4 +373,48 @@ export const STATES = {
   'IDLE': 64,
   'HEAL': 128,
   'WEB': 256
+};
+
+// useful for extractor infos
+export const extras: number[] = [
+  UNITS.EXTRACTOR_MACHINE_GOLD,
+  UNITS.EXTRACTOR_MACHINE_STONE,
+  UNITS.EXTRACTOR_MACHINE_DIAMOND,
+  UNITS.EXTRACTOR_MACHINE_REIDITE,
+  UNITS.EXTRACTOR_MACHINE_AMETHYST
+];
+export const extras_length: number = extras.length;
+
+export function getExtractorTypeName(type: number): string {
+  switch (type) {
+    case UNITS.EXTRACTOR_MACHINE_GOLD: return 'Gold';
+    case UNITS.EXTRACTOR_MACHINE_STONE: return 'Stone';
+    case UNITS.EXTRACTOR_MACHINE_DIAMOND: return 'Diamond';
+    case UNITS.EXTRACTOR_MACHINE_REIDITE: return 'Reidite';
+    case UNITS.EXTRACTOR_MACHINE_AMETHYST: return 'Amethyst';
+  }
+
+  return 'Unknown';
+}
+
+// informations for drawers
+export const infos = {
+  [UNITS.PLAYERS]: {
+    ['strings']: [
+      'PID: [pid]',
+      'Info: [info]'
+    ]
+  },
+  [UNITS.EMERALD_MACHINE]: {
+    ['strings']: [
+      '[owner]',
+    ]
+  },
+  ['extractor']: {
+    ['strings']: [
+      'Wood: [input]',
+      '[type]: [output]',
+      'Est. time: [time]',
+    ]
+  }
 };

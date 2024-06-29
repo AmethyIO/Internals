@@ -1,4 +1,4 @@
-import type { Vector } from "@/interfaces";
+import type { Vector } from '@/core/types';
 
 export const copy_vector = (source: Vector, target: Vector): void => {
   target.x = source.x;

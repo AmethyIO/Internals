@@ -1,6 +1,6 @@
-import { globalObject } from "@/utils";
-import { setHookedVar } from "@/core";
-import type { Hook } from "@/interfaces";
+import type { Hook } from '@/core/types/interfaces';
+import { globalObject, isArray } from '@/core/utils';
+import { getVarProperty, setHookedVar } from '@/core';
 
 export const BASE = globalObject.Symbol();
 
@@ -66,3 +66,23 @@ export const PROP_HOOKS = [
   // NetworkClient hooks
   ['CLIENT',  'SOCKET',         1],
 ];
+
+export function hookAllProperties(): void {
+  const length = PROP_HOOKS.length;
+
+  for (let index: number = 0; index < length; index++) {
+    const hookProp = PROP_HOOKS[index];
+
+    if (hookProp && isArray(hookProp)) {
+      const [variable, property, address] = hookProp;
+
+      const hooked = getVarProperty(
+        variable as string,
+        property as string,
+        address as number
+      );
+
+      if (!!hooked) console.log(`found ${variable}.${property} in address ${address} (${hooked})`);
+    }
+  }
+}
