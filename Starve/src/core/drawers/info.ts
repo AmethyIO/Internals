@@ -328,7 +328,7 @@ export function drawOvenInfo(context: CanvasRenderingContext2D): void {
       const input = info & 0x1F;
       const input2 = (info & 0x3E0) >> 5;
       const output = (info & 0x7C00) >> 10;
-      const time = getReadableTime(input > 0 ? (((input / 2) * 10) / 60) : 0);
+      const time = getReadableTime(input2 > 0 ? (((input2 / 2) * 10) / 60) : 0);
 
       let text_y = 0;
       const text = infos[UNITS.BREAD_OVEN]['strings'];
