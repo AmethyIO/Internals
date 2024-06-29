@@ -1,7 +1,7 @@
 import { extras, extras_length, getExtractorTypeName, ICON_MICROPHONE, infos, UNITS } from '@/core/constants';
 import { VARS, PROPS, getObjectProperty } from '@/core';
 import { getReadableTime, isArray } from '@/core/utils';
-import { getCameraPosition } from '@/core/hooks';
+import { getCameraPosition, getPlayerByPid } from '@/core/hooks';
 
 // temp
 const USING_VOICE = true;
@@ -131,6 +131,109 @@ export function drawExtractorInfo (context: CanvasRenderingContext2D): void {
             context.fillText(t, x + cam_x, y + cam_y + text_y);
             text_y += 16;
           }
+        }
+      }
+    }
+  }
+
+  context.restore();
+}
+
+export function drawTotemInfo(context: CanvasRenderingContext2D): void {
+  if (!VARS.USER[PROPS.ALIVE]) return;
+
+  const [cam_x, cam_y] = getCameraPosition();
+
+  const units = VARS.WORLD[PROPS.UNITS];
+  if (!isArray(units) || units.length === 0) return;
+
+  context.save();
+  context.font = '16px Baloo Paaji';
+  context.lineWidth = 2;
+  context.fillStyle = 'white';
+  context.textAlign = 'center';
+  context.strokeStyle = 'black';
+
+  const totems = units[UNITS.TOTEM];
+  if (!totems || !isArray(totems)) return;
+
+  const totems_length = totems.length;
+  for (let i = 0; i < totems_length; i++) {
+    const totem = totems[i];
+
+    if (totem) {
+      const x = totem[getObjectProperty(totem, 'UNIT_X', 4)!];
+      const y = totem[getObjectProperty(totem, 'UNIT_Y', 5)!];
+      const pid = totem[getObjectProperty(totem, 'UNIT_PID', 2)!];
+      const info = totem[getObjectProperty(totem, 'UNIT_INFO', 9)!];
+
+      const locked = info >= 16;
+
+      const owner = getPlayerByPid(pid);
+      const count = locked ? info % 16 : info;
+
+      let text_y = 0;
+      const text = infos[UNITS.TOTEM]['strings'];
+      const text_length = text.length;
+      if (text_length > 0) {
+        for (let j = 0; j < text_length; j++) {
+          const t = text[j]
+            .replace('$owner', owner ? owner.nickname || 'Unknown' : 'Unknown')
+            .replace('$people', count)
+            .replace('$locked', locked ? "🔒" : "🔓")
+
+          context.strokeText(t, x + cam_x, y + cam_y + text_y);
+          context.fillText(t, x + cam_x, y + cam_y + text_y);
+          text_y += 16;
+        }
+      }
+    }
+  }
+
+  context.restore();
+}
+
+export function drawEmeraldInfo(context: CanvasRenderingContext2D): void {
+  if (!VARS.USER[PROPS.ALIVE]) return;
+
+  const [cam_x, cam_y] = getCameraPosition();
+
+  const units = VARS.WORLD[PROPS.UNITS];
+  if (!isArray(units) || units.length === 0) return;
+
+  context.save();
+  context.font = '16px Baloo Paaji';
+  context.lineWidth = 2;
+  context.fillStyle = 'white';
+  context.textAlign = 'center';
+  context.strokeStyle = 'black';
+
+  const emeralds = units[UNITS.EMERALD_MACHINE];
+  if (!emeralds || !isArray(emeralds)) return;
+
+  const emeralds_length = emeralds.length;
+
+  for (let i = 0; i < emeralds_length; i++) {
+    const emerald = emeralds[i];
+
+    if (emerald) {
+      const x = emerald[getObjectProperty(emerald, 'UNIT_X', 4)!];
+      const y = emerald[getObjectProperty(emerald, 'UNIT_Y', 5)!];
+      const pid = emerald[getObjectProperty(emerald, 'UNIT_PID', 2)!];
+
+      const owner = getPlayerByPid(pid);
+
+      let text_y = 0;
+      const text = infos[UNITS.EMERALD_MACHINE]['strings'];
+      const text_length = text.length;
+      if (text_length > 0) {
+        for (let j = 0; j < text_length; j++) {
+          const t = text[j]
+            .replace('$owner', owner ? owner.nickname || 'Unknown' : 'Unknown')
+
+          context.strokeText(t, x + cam_x, y + cam_y + text_y);
+          context.fillText(t, x + cam_x, y + cam_y + text_y);
+          text_y += 16;
         }
       }
     }

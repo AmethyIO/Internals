@@ -399,6 +399,20 @@ export function getExtractorTypeName(type: number): string {
 
 // informations for drawers
 export const infos = {
+  [UNITS.TOTEM]: {
+    ['strings']: [
+      '$locked',
+      'Owner: $owner',
+      'People: $people',
+    ]
+  },
+  ['extractor']: {
+    ['strings']: [
+      'Wood: $input',
+      '$type: $output',
+      'Est. time: $time',
+    ]
+  },
   [UNITS.PLAYERS]: {
     ['strings']: [
       'PID: $pid',
@@ -408,13 +422,6 @@ export const infos = {
   [UNITS.EMERALD_MACHINE]: {
     ['strings']: [
       '$owner',
-    ]
-  },
-  ['extractor']: {
-    ['strings']: [
-      'Wood: $input',
-      '$type: $output',
-      'Est. time: $time',
     ]
   }
 };
