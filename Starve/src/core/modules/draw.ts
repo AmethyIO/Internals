@@ -1,7 +1,6 @@
 import { get } from './memory';
-import { globalObject } from '@/core/utils';
-
-type RenderFunction = (context: CanvasRenderingContext2D, delta: number) => void;
+import { globalObject } from '../utils';
+import type { RenderFunction } from '../types';
 
 let can: HTMLCanvasElement | undefined = undefined;
 let ctx: CanvasRenderingContext2D | undefined = undefined;
