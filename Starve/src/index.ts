@@ -3,6 +3,7 @@ import { BASE_HOOKS, hookAllProperties } from './core/constants';
 import { sleep } from './core/utils';
 import { VARS, PROPS, hook } from './core';
 import { DRAWERS } from './core/drawers';
+import { createGuify } from './core/modules/gui';
 
 function applyDraws() {
   const len = DRAWERS.length;
@@ -27,6 +28,7 @@ function readyCallback() {
   draw(0);
   applyDraws();
   hookAllProperties();
+  createGuify();
 
   // setInterval(() => {
   //   console.log(OBJ_PROPS);
