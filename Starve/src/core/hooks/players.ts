@@ -1,8 +1,15 @@
-import { isArray } from '@/core/utils';
+import { globalObject, isArray } from '@/core/utils';
 import { UNITS } from '@/core/constants';
 import { PROPS, VARS, getObjectProperty } from '@/core';
 
 let STORED_PLAYERS: any[] = [];
+
+export function getLocalPlayer() {
+  if (VARS.USER[PROPS.ALIVE] || (VARS.CLIENT[PROPS.SOCKET] && VARS.CLIENT[PROPS.SOCKET]['readyState'] === globalObject.WebSocket.OPEN))
+    return VARS.WORLD[PROPS.FAST_UNITS][VARS.USER[PROPS.UID]];
+
+  return undefined;
+}
 
 export function getPlayerByPid(pid: number) {
   return STORED_PLAYERS.find(player => player && player.pid === pid);

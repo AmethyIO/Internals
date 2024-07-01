@@ -1,3 +1,5 @@
+export * from './gui';
 export * from './draw';
+export * from './voice';
 export * from './memory';
-// export * from './devtools-detector.module';
+export * from './autofarm';

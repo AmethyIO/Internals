@@ -52,6 +52,7 @@ export const BASE_HOOKS: [string, Hook][] = [
 export const PROP_HOOKS = [
   // User hooks
   ['USER',    'ID',            16],
+  ['USER',    'UID',           17],
   ['USER',    'ALIVE',         11],
   ['USER',    'GHOST',         65],
   ['USER',    'CAMERA',        28],
@@ -66,6 +67,11 @@ export const PROP_HOOKS = [
 
   // NetworkClient hooks
   ['CLIENT',  'SOCKET',         1],
+  ['CLIENT',  'SELECT_INV',     114],
+  ['CLIENT',  'STOP_ATTACK',    121],
+  ['CLIENT',  'SEND_ATTACK',    122],
+  ['CLIENT',  'SEND_ANGLE',     123],
+  ['CLIENT',  'SEND_MOVE',      124]
 ];
 
 export function hookAllProperties(): void {

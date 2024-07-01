@@ -1,6 +1,8 @@
 import { get } from './memory';
 import { globalObject } from '../utils';
 import type { RenderFunction } from '../types';
+// import { getLocalPlayer } from '../hooks';
+// import { getObjectProperty } from '..';
 
 let can: HTMLCanvasElement | undefined = undefined;
 let ctx: CanvasRenderingContext2D | undefined = undefined;
@@ -22,6 +24,11 @@ const drawFns: RenderFunction[] = [];
 export function draw (timestamp: number = 0): void {
   const ready = get<boolean>('READY');
   if (!ready) return;
+
+  // const localPlayer = getLocalPlayer();
+  // if (localPlayer) {
+  //  console.log(localPlayer[getObjectProperty(localPlayer, 'UNIT_RIGHT', 59)!]);
+  // }
 
   globalObject.requestAnimationFrame(draw);
 
