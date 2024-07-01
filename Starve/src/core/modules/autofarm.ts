@@ -4,19 +4,26 @@ import { getLocalPlayer } from "../hooks";
 import type { StrAny, Vector } from "../types";
 import { globalObject } from "../utils";
 
+const pi2 = globalObject.Math.PI * 2;
+let farming: boolean = false;
+let localPlayer: any | undefined = undefined;
+
+let initialized: boolean = false;
+
+// Target object structure
 const target: StrAny = {};
 target.type = 0;
 target.object = null;
 target.distance = -1;
 
+// Rectangle object for autofarm area
 const rectangle: StrAny = {};
 rectangle.x = 0;
 rectangle.y = 0;
 rectangle.width = 0;
 rectangle.height = 0;
 
-const pi2 = globalObject.Math.PI * 2
-
+// Player position vectors
 const position: Vector = {
   ['x']: 0,
   ['y']: 0
@@ -26,17 +33,28 @@ const positionABS: Vector = {
   ['y']: 0
 };
 
-let interval = undefined;
-let farming: boolean = false;
-let localPlayer: any | undefined = undefined;
-
-let initialized: boolean = false;
-
 // TODO: those functions to be patched automatically
+
+
+/**
+ * Calculate the distance between two points.
+ *
+ * @param p1 - The first point.
+ * @param p2 - The second point.
+ * @returns The distance between p1 and p2.
+ */
 function getDistance(p1: Vector, p2: Vector) {
   return globalObject.Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
 }
 
+/**
+ * Calculate the angle between two points.
+ *
+ * @param point1 - The first point.
+ * @param point2 - The second point.
+ * @param useRelativeCoordinates - Whether to use relative coordinates.
+ * @returns The angle between point1 and point2.
+ */
 function calculateAngle(point1: any, point2: any, useRelativeCoordinates: boolean) {
   if (point1 && point2) {
     if (useRelativeCoordinates) {
@@ -47,6 +65,9 @@ function calculateAngle(point1: any, point2: any, useRelativeCoordinates: boolea
   }
 }
 
+/**
+ * Select the pitchfork item in the player's inventory.
+ */
 function selectPitchfork() {
   if (!localPlayer) return;
 
@@ -66,22 +87,31 @@ function selectPitchfork() {
   }
 }
 
+/**
+ * Switch the autofarm process based on settings.
+ */
 export function processAutofarmSwitch(): void {
   if (settings.autofarm.enabled && !initialized)
     initializeAutofarm();
 }
 
-export function initializeAutofarm(): void {
+/**
+ * Initialize the autofarm process.
+ */
+function initializeAutofarm(): void {
   if (initialized) return;
   if (!settings.autofarm.enabled) return;
 
   processAutofarm();
-  interval = setInterval(processAutofarm, 100);
+  globalObject.setInterval(processAutofarm, 100);
 
   initialized = true;
 }
 
-export function processAutofarm(): void {
+/**
+ * Main process function for the autofarm feature.
+ */
+function processAutofarm(): void {
   if (!initialized) return;
 
   localPlayer = getLocalPlayer();
@@ -99,6 +129,7 @@ export function processAutofarm(): void {
     return;
   }
 
+  // List of object types to be farmed.
   const OBJECTS = [
     ...VARS.WORLD[PROPS.UNITS][UNITS.SEED],
     ...VARS.WORLD[PROPS.UNITS][UNITS.WHEAT_SEED],
@@ -112,6 +143,7 @@ export function processAutofarm(): void {
   ];
   const OBJECTS_LEN = OBJECTS.length;
 
+  // Update rectangle for autofarm area.
   rectangle.x = settings.autofarm.x;
   rectangle.y = settings.autofarm.y;
   rectangle.width = settings.autofarm.xx - rectangle.x;
@@ -119,6 +151,7 @@ export function processAutofarm(): void {
 
   let distance = 0;
 
+  // Loop through objects and find the closest target within the autofarm area.
   for (let i = 0; i < OBJECTS_LEN; ++i) {
     const object = OBJECTS[i];
 
@@ -160,11 +193,10 @@ export function processAutofarm(): void {
       case 17:
       case 18:
       case 19: {
-        // TODO: auto watering
-        // if (settings.autofarm.autowater) {
-        //   if (VARS.USER[PROPS.INVENTORY][INVENTORY_ID.WATERING_CAN]) {
-        //   }
-        // }
+        if (settings.autofarm.autowater) {
+          if (VARS.USER[PROPS.INVENTORY][INVENTORY_ID.WATERING_CAN]) {
+          }
+        }
 
         selectPitchfork();
         target.type = 2;
@@ -210,6 +242,4 @@ export function processAutofarm(): void {
     VARS.CLIENT[PROPS.STOP_ATTACK]();
     VARS.CLIENT[PROPS.SEND_MOVE](0);
   }
-
-  console.log(rectangle, target);
 }

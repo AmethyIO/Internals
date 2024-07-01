@@ -1,13 +1,13 @@
 import { extras, extras_length, getExtractorTypeName, ICON_MICROPHONE, infos, UNITS } from '@/core/constants';
 import { VARS, PROPS, getObjectProperty } from '@/core';
 import { getReadableTime, isArray } from '@/core/utils';
-import { getCameraPosition, getPlayerByPid } from '@/core/hooks';
+import { getCameraPosition, getLocalAlive, getPlayerByPid } from '@/core/hooks';
 
 // temp
 const USING_VOICE = true;
 
 export function drawPlayerInfo (context: CanvasRenderingContext2D): void {
-  if (!VARS.USER[PROPS.ALIVE]) return;
+  if (!getLocalAlive()) return;
 
   const [cam_x, cam_y] = getCameraPosition();
 
@@ -78,7 +78,7 @@ export function drawPlayerInfo (context: CanvasRenderingContext2D): void {
 };
 
 export function drawExtractorInfo (context: CanvasRenderingContext2D): void {
-  if (!VARS.USER[PROPS.ALIVE]) return;
+  if (!getLocalAlive()) return;
 
   const [cam_x, cam_y] = getCameraPosition();
 
@@ -140,7 +140,7 @@ export function drawExtractorInfo (context: CanvasRenderingContext2D): void {
 }
 
 export function drawTotemInfo(context: CanvasRenderingContext2D): void {
-  if (!VARS.USER[PROPS.ALIVE]) return;
+  if (!getLocalAlive()) return;
 
   const [cam_x, cam_y] = getCameraPosition();
 
@@ -194,7 +194,7 @@ export function drawTotemInfo(context: CanvasRenderingContext2D): void {
 }
 
 export function drawEmeraldInfo(context: CanvasRenderingContext2D): void {
-  if (!VARS.USER[PROPS.ALIVE]) return;
+  if (!getLocalAlive()) return;
 
   const [cam_x, cam_y] = getCameraPosition();
 
@@ -243,7 +243,7 @@ export function drawEmeraldInfo(context: CanvasRenderingContext2D): void {
 }
 
 export function drawWindmillInfo(context: CanvasRenderingContext2D): void {
-  if (!VARS.USER[PROPS.ALIVE]) return;
+  if (!getLocalAlive()) return;
 
   const [cam_x, cam_y] = getCameraPosition();
 
@@ -297,7 +297,7 @@ export function drawWindmillInfo(context: CanvasRenderingContext2D): void {
 }
 
 export function drawOvenInfo(context: CanvasRenderingContext2D): void {
-  if (!VARS.USER[PROPS.ALIVE]) return;
+  if (!getLocalAlive()) return;
 
   const [cam_x, cam_y] = getCameraPosition();
 

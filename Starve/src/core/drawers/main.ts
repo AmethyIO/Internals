@@ -1,6 +1,5 @@
 import { getFramesPerSecond } from '@/core/modules';
 import { settings } from '../constants';
-// import { globalObject } from '@/core/utils';
 
 let frames: number = 0;
 

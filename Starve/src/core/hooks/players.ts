@@ -4,24 +4,72 @@ import { PROPS, VARS, getObjectProperty } from '@/core';
 
 let STORED_PLAYERS: any[] = [];
 
+/**
+ * Checks if the local user is alive or the WebSocket connection is open.
+ *
+ * @returns True if the user is alive or the WebSocket connection is open, otherwise false.
+ */
+export function getLocalAlive() {
+  return VARS.USER[PROPS.ALIVE] || (VARS.CLIENT[PROPS.SOCKET] && VARS.CLIENT[PROPS.SOCKET]['readyState'] === globalObject.WebSocket.OPEN);
+}
+
+/**
+ * Retrieves the UID of the local user.
+ *
+ * @returns The UID if the user is alive or the WebSocket connection is open, otherwise 0.
+ */
+export function getLocalUid() {
+  if (getLocalAlive())
+    return VARS.USER[PROPS.UID];
+
+  return 0;
+}
+
+/**
+ * Retrieves the local player object from the game world.
+ *
+ * @returns The local player object if available, otherwise undefined.
+ */
 export function getLocalPlayer() {
-  if (VARS.USER[PROPS.ALIVE] || (VARS.CLIENT[PROPS.SOCKET] && VARS.CLIENT[PROPS.SOCKET]['readyState'] === globalObject.WebSocket.OPEN))
-    return VARS.WORLD[PROPS.FAST_UNITS][VARS.USER[PROPS.UID]];
+  if (getLocalAlive())
+    return VARS.WORLD[PROPS.FAST_UNITS][getLocalUid()];
 
   return undefined;
 }
 
+/**
+ * Retrieves the ID of the local user.
+ *
+ * @returns The ID if the user is alive or the WebSocket connection is open, otherwise 0.
+ */
+export function getLocalId() {
+  if (getLocalAlive())
+    return VARS.USER[PROPS.ID];
+
+  return 0;
+}
+
+/**
+ * Retrieves a player object by their player ID (pid).
+ *
+ * @param pid - The player ID.
+ * @returns The player object if found, otherwise undefined.
+ */
 export function getPlayerByPid(pid: number) {
   return STORED_PLAYERS.find(player => player && player.pid === pid);
 }
 
+/**
+ * Updates the list of stored players with information from the game world.
+ * Removes stored players if the user is not alive.
+ */
 export function updatePlayers() {
   const sl = STORED_PLAYERS.length;
 
-  if (!VARS.USER[PROPS.ALIVE]) {
-    if (sl > 0)
+  if (!getLocalAlive()) {
+    if (sl > 0) {
       STORED_PLAYERS = [];
-
+    }
     return;
   }
 
@@ -30,6 +78,7 @@ export function updatePlayers() {
 
   const ful = FAST_UNITS.length;
 
+  // Loop through fast units to update stored players.
   for (let i = 0; i < ful; i++) {
     const FAST_UNIT = FAST_UNITS[i];
 
@@ -43,7 +92,6 @@ export function updatePlayers() {
       const obj = FAST_UNIT[getObjectProperty(FAST_UNIT, 'UNIT_OBJ', 14)!];
       if (obj) {
         const player = getPlayerByPid(pid);
-
         player.nickname = obj[getObjectProperty(obj, 'PLAYER_NICKNAME', 1)!];
       }
     }

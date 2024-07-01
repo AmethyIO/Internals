@@ -1,4 +1,4 @@
-import { addToDraw, draw, get, initializeAutofarm, initializeCanvas, processAutofarmSwitch, set } from './core/modules';
+import { addToDraw, draw, get, initializeCanvas, processAutofarmSwitch, set } from './core/modules';
 import { BASE_HOOKS, hookAllProperties, settings } from './core/constants';
 import { globalObject, sleep } from './core/utils';
 import { VARS, PROPS, hook, getObjectProperty } from './core';
