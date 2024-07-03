@@ -195,7 +195,7 @@ function processAutofarm(): void {
         const dried = info & 0x10;
         const amount = info & 0xF;
 
-        if (info === 10 || amount === 0) continue;
+        if (amount === 0) continue;
         if (!settings.autofarm.autowater && dried) continue;
 
         if (rectangle.x < x - 50 + 100 && rectangle.x + rectangle.width > x - 50 && rectangle.y < y - 50 + 100 && rectangle.y + rectangle.height > y - 50) {
