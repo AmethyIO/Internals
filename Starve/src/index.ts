@@ -1,4 +1,4 @@
-import { addToDraw, draw, get, initializeCanvas, processAutofarmSwitch, set } from './core/modules';
+import { addToDraw, draw, get, initializeCanvas, processAutocraftSwitch, processAutofarmSwitch, set, TO_INITIALIZE_WITHOUT_ENABLING, TO_INITIALIZE_WITHOUT_ENABLING_L } from './core/modules';
 import { BASE_HOOKS, hookAllProperties, settings } from './core/constants';
 import { globalObject, sleep } from './core/utils';
 import { VARS, PROPS, hook, getObjectProperty } from './core';
@@ -17,13 +17,36 @@ function applyDraws() {
   }
 }
 
+function applyEnabledAutos() {
+  for (let i = 0; i < TO_INITIALIZE_WITHOUT_ENABLING_L; i++) {
+    const auto = TO_INITIALIZE_WITHOUT_ENABLING[i];
+
+    if (typeof auto !== 'function')
+      continue;
+
+    auto();
+  }
+}
+
 function processKeyboard(e: KeyboardEvent): void {
+  if (VARS.USER[PROPS.CHAT][getObjectProperty(VARS.USER[PROPS.CHAT], 'USER_CHAT_OPEN', 1)!]) return;
+  if (VARS.USER[PROPS.TERMINAL][getObjectProperty(VARS.USER[PROPS.CHAT], 'USER_TERMINAL_OPEN', 1)!]) return;
+
   if (e.code === settings.autofarm.keybind) {
     settings.autofarm.enabled = !settings.autofarm.enabled;
-    processAutofarmSwitch();
+    
+    if (settings.autofarm.enabled)
+      processAutofarmSwitch();
   }
 
-  if (e.code === 'KeyZ' || e.code === 'KeyX' || e.code === 'KeyC' || e.code === 'KeyV') {
+  if (e.code === settings.autocraft.keybind) {
+    settings.autocraft.enabled = !settings.autocraft.enabled;
+
+    if (settings.autocraft.enabled)
+      processAutocraftSwitch();
+  }
+
+  if (e.code === 'KeyZ' || e.code === 'KeyX' || e.code === 'KeyN' || e.code === 'KeyV' || e.code === 'KeyB') {
     const player = getLocalPlayer();
     if (!player) return;
 
@@ -36,12 +59,16 @@ function processKeyboard(e: KeyboardEvent): void {
         settings.autofarm.y = player[getObjectProperty(player, 'PLAYER_Y', 5)!];
         break;
       }
-      case 'KeyC': {
+      case 'KeyN': {
         settings.autofarm.xx = player[getObjectProperty(player, 'PLAYER_X', 4)!];
         break;
       }
       case 'KeyV': {
         settings.autofarm.yy = player[getObjectProperty(player, 'PLAYER_Y', 5)!];
+        break;
+      }
+      case 'KeyB': {
+        settings.autofarm.autowater = !settings.autofarm.autowater;
         break;
       }
     }
@@ -59,14 +86,23 @@ function readyCallback() {
   draw(0);
   applyDraws();
   hookAllProperties();
-
+  applyEnabledAutos();
 
   globalObject.addEventListener('keydown', processKeyboard, false);
 
-  setInterval(() => {
-    // console.log(OBJ_PROPS);
-    console.log(VARS.USER[PROPS.UID]);
-  }, 1000);
+  // let c = 0;
+  // for (const p in VARS.CLIENT) {
+  //   c++;
+
+  //   if (typeof VARS.CLIENT[p] === 'function') {
+  //     console.log(`client.${p} - ${c}`);
+  //   }
+  // }
+
+  // setInterval(() => {
+  //   // console.log(OBJ_PROPS);
+  //   console.log(VARS.USER[PROPS.UID]);    console.log(VARS.MOUSE[PROPS.POS]);
+  // }, 1000);
 
   console.log('ready', VARS, PROPS);
 }

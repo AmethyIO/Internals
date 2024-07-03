@@ -3,6 +3,8 @@ import { settings } from '../constants';
 
 let frames: number = 0;
 
+const offset = 240;
+
 export function drawBase(context: CanvasRenderingContext2D): void {
   const current = getFramesPerSecond();
   if (frames !== current) frames = current;
@@ -16,8 +18,8 @@ export function drawBase(context: CanvasRenderingContext2D): void {
   // Draw FPS
   const t: string = `FPS: ${frames}`;
 
-  context.strokeText(t, 10, 50);
-  context.fillText(t, 10, 50);
+  context.strokeText(t, 10, 50 + offset);
+  context.fillText(t, 10, 50 + offset);
 
   context.restore();
 };
@@ -33,13 +35,13 @@ export function drawDebugSettings(context: CanvasRenderingContext2D): void {
 
   for (const [setting, obj] of Object.entries(settings)) {
     // if (obj.enabled) {
-    context.strokeText(setting, 10, 80 + text_y + text_yy);
-    context.fillText(setting, 10, 80 + text_y + text_yy);
+    context.strokeText(setting, 10, 80 + offset + text_y + text_yy);
+    context.fillText(setting, 10, 80 + offset + text_y + text_yy);
 
     for (const [key, value] of Object.entries(obj)) {
-      const t = `${key}: ${value}`;
-      context.strokeText(t, 25, 100 + text_y + text_yy);
-      context.fillText(t, 25, 100 + text_y + text_yy);
+      const tv = `${key}: ${value}`;
+      context.strokeText(tv, 25, 100 + offset + text_y + text_yy);
+      context.fillText(tv, 25, 100 + offset + text_y + text_yy);
 
       text_yy += 20;
     }

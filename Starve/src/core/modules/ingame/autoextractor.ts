@@ -1,0 +1,2 @@
+let initialized: boolean = false;
+

@@ -1,5 +1,5 @@
 // Voice chat module
-import { settings } from "../constants";
+import { settings } from "../../constants";
 
 let initialized: boolean = false;
 

@@ -47,6 +47,7 @@ VARS.GAME = undefined;
 VARS.WORLD = undefined;
 VARS.MOUSE = undefined;
 VARS.CLIENT = undefined;
+VARS.KEYBOARD = undefined;
 
 /**
  * Set a variable in the VARS object.

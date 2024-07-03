@@ -21,6 +21,14 @@ export function initializeCanvas(): boolean {
   return !!can;
 }
 
+export function getCanvas(): HTMLCanvasElement {
+  return can!;
+}
+
+export function getDelta(): number {
+  return delta;
+}
+
 let last: number = 0;  // Timestamp of the last frame.
 let delta: number = 0;  // Time difference between the current and last frame.
 

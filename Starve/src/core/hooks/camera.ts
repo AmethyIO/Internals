@@ -1,7 +1,7 @@
 // TODO: find way to hook it normal than atm
 
-import { PROPS, VARS } from '@/core';
-import { globalObject } from '../utils';
+import { VARS } from '@/core';
+import { getLocalAlive } from './players';
 
 let camx = -1;
 let camy = -1;
@@ -11,7 +11,7 @@ export function getCameraPosition(): number[] {
 }
 
 export function updateCameraPosition(): void {
-  if (!VARS.USER[PROPS.ALIVE] || (VARS.CLIENT[PROPS.SOCKET] && VARS.CLIENT[PROPS.SOCKET]['readyState'] !== globalObject.WebSocket.OPEN)) {
+  if (!getLocalAlive()) {
     if (camx !== 0 || camy !== 0)
       camx = camy = 0;
 

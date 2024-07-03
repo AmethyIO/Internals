@@ -19,8 +19,12 @@ export function getLocalAlive() {
  * @returns The UID if the user is alive or the WebSocket connection is open, otherwise 0.
  */
 export function getLocalUid() {
-  if (getLocalAlive())
-    return VARS.USER[PROPS.UID];
+  if (getLocalAlive()) {
+    if (typeof VARS.USER[PROPS.UID] !== 'undefined')
+      return VARS.USER[PROPS.UID];
+
+    return getLocalId() * VARS.WORLD[PROPS.MAX_UNITS];
+  }
 
   return 0;
 }
@@ -31,8 +35,30 @@ export function getLocalUid() {
  * @returns The local player object if available, otherwise undefined.
  */
 export function getLocalPlayer() {
-  if (getLocalAlive())
-    return VARS.WORLD[PROPS.FAST_UNITS][getLocalUid()];
+  if (getLocalAlive()) {
+    if (VARS.WORLD[PROPS.FAST_UNITS])
+      return VARS.WORLD[PROPS.FAST_UNITS][getLocalUid()];
+    else {
+      let p = getPlayerByPid(getLocalId());
+      if (p) {
+        const ps = VARS.WORLD[PROPS.UNITS][UNITS.PLAYERS];
+        const psl = ps.length;
+
+        for (let i = 0; i < psl; i++) {
+          const o = ps[i];
+          if (o) {
+            const pid = o[getObjectProperty(o, 'UNIT_PID', 2)!];
+            if (pid === p.pid) {
+              p = o;
+              break;
+            }
+          }
+        }
+
+        return p;
+      }
+    }
+  }
 
   return undefined;
 }
