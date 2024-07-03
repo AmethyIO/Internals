@@ -192,11 +192,11 @@ function processAutofarm(): void {
         const y = OBJECT[getObjectProperty(OBJECT, 'UNIT_Y', 5)!];
         const info = OBJECT[getObjectProperty(OBJECT, 'UNIT_INFO', 9)!];
 
-        // const dried = info & 0x10;
+        const dried = info & 0x10;
         const amount = info & 0xF;
 
         if (amount === 0) continue;
-        // if (!settings.autofarm.autowater && dried) continue;
+        if (!settings.autofarm.autowater && dried) continue;
 
         if (rectangle.x < x - 50 + 100 && rectangle.x + rectangle.width > x - 50 && rectangle.y < y - 50 + 100 && rectangle.y + rectangle.height > y - 50) {
           distance = (px - x) ** 2 + (py - y) ** 2;
