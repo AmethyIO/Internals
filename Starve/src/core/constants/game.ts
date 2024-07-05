@@ -401,42 +401,38 @@ export function getExtractorTypeName(type: number): string {
 export const infos = {
   [UNITS.TOTEM]: {
     ['strings']: [
-      '$locked',
-      'Owner: $owner',
-      'People: $people',
+      '$locked | People: $people',
+      'Owner: $owner'
     ]
   },
   ['extractor']: {
     ['strings']: [
-      'Wood: $input',
-      '$type: $output',
-      'Est. time: $time',
+      'Wood: $input | $type: $output',
+      'Est. time: $time'
     ]
   },
   [UNITS.PLAYERS]: {
     ['strings']: [
       'PID: $pid',
-      'Info: $info'
+      // 'Info: $info'
     ]
   },
   [UNITS.WINDMILL]: {
     ['strings']: [
-      'Wheat: $input',
-      'Flour: $output',
-      'Est. time: $time',
+      'Wheat: $input | Flour: $output',
+      'Est. time: $time'
     ]
   },
   [UNITS.BREAD_OVEN]: {
     ['strings']: [
-      'Wood: $input',
-      'Flour: $input2',
+      'Wood: $input | Flour: $input_flour',
       'Bread: $output',
-      'Est. time: $time',
+      'Est. time: $time'
     ]
   },
   [UNITS.EMERALD_MACHINE]: {
     ['strings']: [
-      '$owner',
+      '$owner'
     ]
   }
 };

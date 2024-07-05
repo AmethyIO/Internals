@@ -427,7 +427,7 @@ export function drawOvenInfo(context: CanvasRenderingContext2D): void {
           const t = text[j]
             .replace('$time', time)
             .replace('$input', 'x' + input)
-            .replace('$input2', 'x' + input2)
+            .replace('$input_flour', 'x' + input2)
             .replace('$output', 'x' + output);
 
           // Draw text on canvas
