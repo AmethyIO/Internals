@@ -27,7 +27,7 @@ export function initializeAutofood(): void {
   if (initialized || !settings.autofood.enabled) return;
 
   processAutofood();
-  globalObject.setInterval(processAutofood, 100);
+  globalObject.setInterval(processAutofood, 3000);
 
   initialized = true;
 }
@@ -40,16 +40,19 @@ async function processAutofood(): Promise<void> {
 
   const n = getObjectProperty(VARS.USER[PROPS.INVENTORY], 'INVENTORY_N', 4)!;
 
-  const hunger: number = VARS.USER[PROPS.GAUGES][getObjectProperty(VARS.USER[PROPS.GAUGES], 'USER_GAUGES_H', 3)!];
+  let hunger: number = VARS.USER[PROPS.GAUGES][getObjectProperty(VARS.USER[PROPS.GAUGES], 'USER_GAUGES_H', 3)!];
   if (hunger < 0.38) {
     for (let index: number = 0; index < EATABLE_LEN; index++) {
       const FOOD = EATABLE[index];
       const [FOOD_ID, FOOD_REDUCE_HUNGER] = FOOD;
 
       while (VARS.USER[PROPS.INVENTORY][n][FOOD_ID] && hunger < 1) {
-        await sleep(50);
+        await sleep(500);
 
         VARS.CLIENT[PROPS.SELECT_INV](FOOD_ID);
+        console.log('ate', FOOD_ID);
+
+        hunger = VARS.USER[PROPS.GAUGES][getObjectProperty(VARS.USER[PROPS.GAUGES], 'USER_GAUGES_H', 3)!];
         if (hunger >= 1) break;
       }
 
