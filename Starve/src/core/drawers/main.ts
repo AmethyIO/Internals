@@ -3,7 +3,7 @@ import { settings } from '../constants';
 
 let frames: number = 0;
 
-const offset = 240;
+const offset = 280;
 
 export function drawBase(context: CanvasRenderingContext2D): void {
   const current = getFramesPerSecond();
@@ -12,6 +12,7 @@ export function drawBase(context: CanvasRenderingContext2D): void {
   context.save();
 
   context.font = '16px Baloo Paaji';
+  context.textAlign = 'start';
   context.fillStyle = '#fff';
   context.lineWidth = 4;
 
@@ -30,6 +31,7 @@ export function drawDebugSettings(context: CanvasRenderingContext2D): void {
 
   context.save();
   context.font = '16px Baloo Paaji';
+  context.textAlign = 'start';
   context.fillStyle = '#fff';
   context.lineWidth = 3;
 

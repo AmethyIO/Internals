@@ -1,17 +1,20 @@
 import { GLOBAL } from "@/core/constants";
 import { globalObject, sleep } from "@/core/utils";
-import { socketConnected, socketHandshaked, socketUpdater } from "./socket-packets";
+import { socketConnected, socketHandshaked, socketPlayerJoin, socketPlayerLeft, socketUpdatePlayers, socketUpdater } from "./socket-packets";
 
 import { type ManagerOptions, type Socket, type SocketOptions } from "socket.io-client";
 
 const SOCKET_EVENTS: any[] = [
-  ['update', socketUpdater],
   ['leave', function() {
     if (GLOBAL.SOCKET_CURRENT_ROOM !== undefined)
       GLOBAL.SOCKET_CURRENT_ROOM = undefined;
   }],
+  ['update', socketUpdater],
   ['connect', socketConnected],
   ['handshaked', socketHandshaked],
+  ['update.players', socketUpdatePlayers],
+  ['player.join', socketPlayerJoin],
+  ['player.left', socketPlayerLeft]
 ];
 const SOCKET_OPTIONS: Partial<ManagerOptions & SocketOptions> = {
   ['transports']: ['websocket']

@@ -1,10 +1,14 @@
 import { globalObject } from "../global";
 
 export function getReadableTime(seconds: number) {
-  if (seconds < 1)
-    return `${(seconds * 60).toFixed(0)}s`;
+  if (seconds < 0) return "0.00s";
+
+  const minutes = ~~(seconds / 60);
+  const remainingSeconds = ~~(seconds % 60);
   
-  return `${seconds.toFixed(2)}m`;
+  const paddedSeconds = remainingSeconds.toString().padStart(2, '0');
+
+  return `${minutes}.${paddedSeconds}${seconds > 60 ? 'm' : 's'}`;
 }
 
 export function getRandomInt(min: number, max: number) {

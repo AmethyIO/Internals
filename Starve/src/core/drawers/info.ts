@@ -1,10 +1,8 @@
-import { extras, extras_length, getExtractorTypeName, ICON_MICROPHONE, infos, UNITS } from '@/core/constants';
+import { extras, extras_length, getExtractorTypeName, GLOBAL, ICON_MICROPHONE, infos, settings, UNITS } from '@/core/constants';
 import { VARS, PROPS, getObjectProperty } from '@/core';
 import { getReadableTime, isArray } from '@/core/utils';
-import { getCameraPosition, getLocalAlive, getPlayerByPid } from '@/core/hooks';
-
-// temp
-const USING_VOICE = true;
+import { getCameraPosition, getLocalAlive, getLocalId, getPlayerByPid } from '@/core/hooks';
+import type { AmethystPlayer } from '@/amethyst/components';
 
 /**
  * Draws player information on the canvas context.
@@ -35,7 +33,7 @@ export function drawPlayerInfo(context: CanvasRenderingContext2D): void {
   context.font = '19px Baloo Paaji';
   context.lineWidth = 4;
   context.fillStyle = 'white';
-  // context.textAlign = 'center';
+  context.textAlign = 'center';
   context.strokeStyle = 'black';
 
   // Iterate through each player unit to draw their information
@@ -52,28 +50,19 @@ export function drawPlayerInfo(context: CanvasRenderingContext2D): void {
         const x = player[getObjectProperty(player, 'UNIT_X', 4)!];
         const y = player[getObjectProperty(player, 'UNIT_Y', 5)!];
         const pid = player[getObjectProperty(player, 'UNIT_PID', 2)!];
-        const info = player[getObjectProperty(player, 'UNIT_INFO', 9)!];
-
-        // Draw voice chat indicator if using voice chat
-        context.save();
-        if (USING_VOICE) {
-          context.globalAlpha = 0.45;
-          context.drawImage(ICON_MICROPHONE, (x - 25) + cam_x, (y - (ICON_MICROPHONE.height - 25)) + cam_y, 166, 70);
-        }
-        context.restore();
+        // const info = player[getObjectProperty(player, 'UNIT_INFO', 9)!];
 
         // Draw multiple lines of player information
-        let text_y = 0;
-
         const text = infos[UNITS.PLAYERS]['strings'];
         const text_length = text.length;
 
         if (text_length > 0) {
+          let text_y = 0;
+
           for (let j = 0; j < text_length; j++) {
             // Replace placeholders with actual values
             const t = text[j]
               .replace('$pid', pid)
-              .replace('$info', info);
 
             // Draw text on canvas
             context.strokeText(t, x + cam_x, y + cam_y + text_y);
@@ -86,6 +75,73 @@ export function drawPlayerInfo(context: CanvasRenderingContext2D): void {
   }
 
   // Restore original drawing context
+  context.restore();
+}
+
+export function drawRealtimePlayerInfo(context: CanvasRenderingContext2D): void {
+  // Check if the local player is alive
+  if (!getLocalAlive()) return;
+
+  // Get camera position
+  const [cam_x, cam_y] = getCameraPosition();
+
+  // Retrieve all units from the game world
+  const units = VARS.WORLD[PROPS.UNITS];
+  if (!Array.isArray(units) || units.length === 0) return;
+
+  // Retrieve the array of player units from the units
+  const players = units[UNITS.PLAYERS];
+  if (!Array.isArray(players) || !players) return;
+
+  // Get the number of realtime players in the array
+  const realtime_players = GLOBAL.AMETHYST_PLAYERS as AmethystPlayer[];
+  const realtime_players_length = realtime_players.length;
+  if (realtime_players_length === 0) return;
+
+  context.save();
+  context.font = '14px Baloo Paaji';
+  context.lineWidth = 2;
+  context.fillStyle = 'white';
+  context.textAlign = 'center';
+  context.strokeStyle = 'black';
+
+  // Iterate over each player in the game world
+  for (let i = 0; i < players.length; i++) {
+    const player = players[i];
+
+    if (player) {
+      const pid = player[getObjectProperty(player, 'UNIT_PID', 2)!];
+      const realtime = GLOBAL.AMETHYST_PLAYERS[pid];
+
+      if (realtime) {
+        const x = player[getObjectProperty(player, 'UNIT_X', 4)!];
+        const y = player[getObjectProperty(player, 'UNIT_Y', 5)!];
+
+        // Draw multiple lines of player information
+        const text = infos['prealtime']['strings'];
+        const text_length = text.length;
+
+        if (text_length > 0) {
+          let text_y = 0;
+
+          for (let j = 0; j < text_length; j++) {
+            // Replace placeholders with actual values
+            const t = text[j]
+              .replace('$water', `${realtime.water}%`)
+              .replace('$health', `${realtime.health}%`)
+              .replace('$hunger', `${realtime.hunger}%`)
+              .replace('$temperature', `${realtime.temperature}%`);
+
+            // Draw text on canvas
+            context.strokeText(t, x + cam_x, (y + cam_y - 50) + text_y);
+            context.fillText(t, x + cam_x, (y + cam_y - 50) + text_y);
+            text_y += 22; // Increase y position for next line
+          }
+        }
+      }
+    }
+  }
+
   context.restore();
 }
 
@@ -110,7 +166,7 @@ export function drawExtractorInfo(context: CanvasRenderingContext2D): void {
   context.font = '16px Baloo Paaji';
   context.lineWidth = 2;
   context.fillStyle = 'white';
-  // context.textAlign = 'center';
+  context.textAlign = 'center';
   context.strokeStyle = 'black';
 
   // Iterate through each type of extractor to draw their information
@@ -184,7 +240,7 @@ export function drawTotemInfo(context: CanvasRenderingContext2D): void {
   context.font = '16px Baloo Paaji';
   context.lineWidth = 2;
   context.fillStyle = 'white';
-  // context.textAlign = 'center';
+  context.textAlign = 'center';
   context.strokeStyle = 'black';
 
   // Retrieve the array of totem units from the units
@@ -256,7 +312,7 @@ export function drawEmeraldInfo(context: CanvasRenderingContext2D): void {
   context.font = '16px Baloo Paaji';
   context.lineWidth = 2;
   context.fillStyle = 'white';
-  // context.textAlign = 'center';
+  context.textAlign = 'center';
   context.strokeStyle = 'black';
 
   // Retrieve the array of emerald machine units from the units
@@ -330,7 +386,7 @@ export function drawWindmillInfo(context: CanvasRenderingContext2D): void {
   context.font = '16px Baloo Paaji';
   context.lineWidth = 2;
   context.fillStyle = 'white';
-  // context.textAlign = 'center';
+  context.textAlign = 'center';
   context.strokeStyle = 'black';
 
   // Iterate through each windmill unit to draw their information
@@ -400,7 +456,7 @@ export function drawOvenInfo(context: CanvasRenderingContext2D): void {
   context.font = '16px Baloo Paaji';
   context.lineWidth = 2;
   context.fillStyle = 'white';
-  // context.textAlign = 'center';
+  context.textAlign = 'center';
   context.strokeStyle = 'black';
 
   // Iterate through each oven unit to draw their information
@@ -415,7 +471,7 @@ export function drawOvenInfo(context: CanvasRenderingContext2D): void {
       const input = info & 0x1F;
       const input2 = (info & 0x3E0) >> 5;
       const output = (info & 0x7C00) >> 10;
-      const time = getReadableTime(input2 > 0 ? (((input2 / 2) * 10) / 60) : 0);
+      const time = getReadableTime(input > 0 ? input2 > 0 ? (((input2 / 2) * 10) / 60) : 0 : 0);
 
       // Draw multiple lines of oven information
       let text_y = 0;
@@ -425,7 +481,7 @@ export function drawOvenInfo(context: CanvasRenderingContext2D): void {
         for (let j = 0; j < text_length; j++) {
           // Replace placeholders with actual values
           const t = text[j]
-            .replace('$time', time)
+            .replace('$time', time as string)
             .replace('$input', 'x' + input)
             .replace('$input_flour', 'x' + input2)
             .replace('$output', 'x' + output);
@@ -454,5 +510,5 @@ export function drawAllyStuff(context: CanvasRenderingContext2D): void {
   const units = VARS.WORLD[PROPS.UNITS];
   if (!isArray(units) || units.length === 0) return;
 
-  
+
 }
