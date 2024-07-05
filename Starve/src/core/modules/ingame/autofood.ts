@@ -27,7 +27,7 @@ export function initializeAutofood(): void {
   if (initialized || !settings.autofood.enabled) return;
 
   processAutofood();
-  globalObject.setInterval(processAutofood, 3000);
+  globalObject.setInterval(processAutofood, 4000);
 
   initialized = true;
 }
