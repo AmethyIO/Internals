@@ -1,4 +1,4 @@
 export interface Hook {
-  get: () => any;
+  get?: () => any;
   set?: (data: any) => void;
 }

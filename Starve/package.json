@@ -85,6 +85,7 @@
     "@types/node": "^20.14.6",
     "devtools-detector": "^2.0.18",
     "goober": "^2.1.14",
-    "guify": "^0.15.1"
+    "guify": "^0.15.1",
+    "socket.io-client": "^4.7.5"
   }
 }

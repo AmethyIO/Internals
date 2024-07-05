@@ -18,6 +18,9 @@ const plugins = [cleanWebpackPlugin];
  * Webpack production configuration.
  */
 const WebpackConfig = {
+  externals: {
+    "socket.io-client": "window",
+  },
   optimization: {
     minimize: false,
     minimizer: [
@@ -32,7 +35,7 @@ const WebpackConfig = {
     //   cacheGroups: {
     //     defaultVendors: {
     //       test: /[\\/]node_modules[\\/]/, // Target node_modules directory
-    //       name: 'vendors',
+    //       name: 'common',
     //       chunks: 'all',
     //     },
     //     default: {

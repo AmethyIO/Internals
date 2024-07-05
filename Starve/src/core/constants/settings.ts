@@ -15,6 +15,11 @@ export const settings = {
     ['enabled']: true
   },
 
+  ['autofood']: {
+    ['enabled']: false,
+    ['keybind']: '',
+  },
+
   ['autocraft']: {
     ['keybind']: 'KeyC',
     ['enabled']: false

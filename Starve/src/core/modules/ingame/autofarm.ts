@@ -43,6 +43,7 @@ const OBJECTS_DETECT = [
 ];
 const OBJECTS_DETECT_LEN = OBJECTS_DETECT.length;
 
+// TODO
 // List of object to be ignored
 const OBJECTS_IGNORE = [
   UNITS.GOLD_SPIKE,
@@ -154,6 +155,9 @@ function processAutofarm(): void {
     return;
   }
 
+  const canvas = getCanvas();
+  const rect = canvas.getBoundingClientRect();
+
   // Update rectangle for autofarm area
   rectangle.x = settings.autofarm.x;
   rectangle.y = settings.autofarm.y;
@@ -172,8 +176,6 @@ function processAutofarm(): void {
   const px = localPlayer[getObjectProperty(localPlayer, 'UNIT_X', 4)!];
   const py = localPlayer[getObjectProperty(localPlayer, 'UNIT_Y', 5)!];
   const [cam_x, cam_y] = getCameraPosition();
-  const canvas = getCanvas();
-  const rect = canvas.getBoundingClientRect();
 
   // Loop through objects and find the closest target within the autofarm area.
   for (let i = 0; i < OBJECTS_DETECT_LEN; i++) {
@@ -195,7 +197,7 @@ function processAutofarm(): void {
         const dried = info & 0x10;
         const amount = info & 0xF;
 
-        if (amount === 0) continue;
+        if (info === 10 || amount === 0) continue;
         if (!settings.autofarm.autowater && dried) continue;
 
         if (rectangle.x < x - 50 + 100 && rectangle.x + rectangle.width > x - 50 && rectangle.y < y - 50 + 100 && rectangle.y + rectangle.height > y - 50) {

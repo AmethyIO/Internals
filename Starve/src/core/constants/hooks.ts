@@ -5,14 +5,6 @@ import { getVarProperty, setHookedVar } from '@/core';
 export const BASE = globalObject.Symbol();
 
 export const BASE_HOOKS: [string, Hook][] = [
-  // ['keys', { // Keyboard hook
-  //   ['get']: function () { return (this as any)[BASE] },
-  //   ['set']: function (data: any) {
-  //     (this as any)[BASE] = data;
-  //     setHookedVar('KEYBOARD', this);
-  //     return (this as any)[BASE];
-  //   }
-  // }],
   ['IDLE', { // Mouse hook
     ['get']: function () { return (this as any)[BASE] },
     ['set']: function (data: any) {
@@ -34,7 +26,7 @@ export const BASE_HOOKS: [string, Hook][] = [
       setHookedVar('GAME', this);
     }
   }],
-  ['connect', { // NetworkClient hook
+  ['ping', { // NetworkClient hook
     ['get']: function () { return (this as any)[BASE] },
     ['set']: function (data: any) {
       (this as any)[BASE] = data;
@@ -64,6 +56,7 @@ export const PROP_HOOKS = [
   ['USER',    'ALIVE',         11],
   ['USER',    'GHOST',         65],
   ['USER',    'CAMERA',        28],
+  ['USER',    'GAUGES',        30],
   ['USER',    'CONTROL',       29],
   ['USER',    'IN_TEAM',       22],
   ['USER',    'TERMINAL',      42],
@@ -72,22 +65,6 @@ export const PROP_HOOKS = [
   // Mouse hooks
   ['MOUSE',   'POS',            5],
   ['MOUSE',   'STATE',          9],
-
-  // Keyboard hooks
-  // ['KEYBOARD', 'IS_1',          33],
-  // ['KEYBOARD', 'IS_2',          34],
-  // ['KEYBOARD', 'IS_3',          35],
-  // ['KEYBOARD', 'IS_4',          36],
-  // ['KEYBOARD', 'IS_R',          38],
-  // ['KEYBOARD', 'IS_G',          39],
-  // ['KEYBOARD', 'IS_V',          40],
-  // ['KEYBOARD', 'IS_B',          41],
-  // ['KEYBOARD', 'IS_TOP',        30],
-  // ['KEYBOARD', 'IS_CTRL',       32],
-  // ['KEYBOARD', 'IS_LEFT',       28],
-  // ['KEYBOARD', 'IS_RIGHT',      29],
-  // ['KEYBOARD', 'IS_SPACE',      37],
-  // ['KEYBOARD', 'IS_BOTTOM',     31],
 
   // World hooks
   ['WORLD',   'MODE',           1],

@@ -1,6 +1,6 @@
-import { hook } from '@/core';
-import { BASE_HOOKS } from '@/core/constants';
+import { hook, PROPS, VARS } from '@/core';
+import { BASE_HOOKS, GLOBAL } from '@/core/constants';
 
-export function updateHooks (): void {
+export function updateHooks(): void {
   hook(BASE_HOOKS);
 }

@@ -10,7 +10,7 @@ let STORED_PLAYERS: any[] = [];
  * @returns True if the user is alive or the WebSocket connection is open, otherwise false.
  */
 export function getLocalAlive() {
-  return VARS.USER[PROPS.ALIVE] || (VARS.CLIENT[PROPS.SOCKET] && VARS.CLIENT[PROPS.SOCKET]['readyState'] === globalObject.WebSocket.OPEN);
+  return VARS.USER[PROPS.ALIVE] && (VARS.CLIENT[PROPS.SOCKET] && VARS.CLIENT[PROPS.SOCKET]['readyState'] === globalObject.WebSocket.OPEN);
 }
 
 /**
@@ -39,23 +39,25 @@ export function getLocalPlayer() {
     if (VARS.WORLD[PROPS.FAST_UNITS])
       return VARS.WORLD[PROPS.FAST_UNITS][getLocalUid()];
     else {
-      let p = getPlayerByPid(getLocalId());
-      if (p) {
-        const ps = VARS.WORLD[PROPS.UNITS][UNITS.PLAYERS];
-        const psl = ps.length;
+      if (VARS.WORLD[PROPS.UNITS]) {
+        let p = getPlayerByPid(getLocalId());
+        if (p) {
+          const ps = VARS.WORLD[PROPS.UNITS][UNITS.PLAYERS];
+          const psl = ps.length;
 
-        for (let i = 0; i < psl; i++) {
-          const o = ps[i];
-          if (o) {
-            const pid = o[getObjectProperty(o, 'UNIT_PID', 2)!];
-            if (pid === p.pid) {
-              p = o;
-              break;
+          for (let i = 0; i < psl; i++) {
+            const o = ps[i];
+            if (o) {
+              const pid = o[getObjectProperty(o, 'UNIT_PID', 2)!];
+              if (pid === p.pid) {
+                p = o;
+                break;
+              }
             }
           }
-        }
 
-        return p;
+          return p;
+        }
       }
     }
   }
