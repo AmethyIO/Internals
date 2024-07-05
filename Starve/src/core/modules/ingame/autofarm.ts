@@ -82,9 +82,9 @@ function getDistance(p1: Vector, p2: Vector) {
 function calculateAngle(point1: any, point2: any, useRelativeCoordinates: boolean) {
   if (point1 && point2) {
     if (useRelativeCoordinates) {
-      return Math.atan2(point2.r.y - point1.r.y, point2.r.x - point1.r.x);
+      return globalObject.Math.atan2(point2.r.y - point1.r.y, point2.r.x - point1.r.x);
     } else {
-      return Math.atan2(point2.y - point1.y, point2.x - point1.x);
+      return globalObject.Math.atan2(point2.y - point1.y, point2.x - point1.x);
     }
   }
 }
@@ -123,8 +123,7 @@ export function processAutofarmSwitch(): void {
  * Initialize the autofarm process.
  */
 function initializeAutofarm(): void {
-  if (initialized) return;
-  if (!settings.autofarm.enabled) return;
+  if (initialized || !settings.autofarm.enabled) return;
 
   processAutofarm();
   globalObject.setInterval(processAutofarm, 80);

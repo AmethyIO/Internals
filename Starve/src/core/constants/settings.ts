@@ -16,8 +16,7 @@ export const settings = {
   },
 
   ['autofood']: {
-    ['enabled']: false,
-    ['keybind']: '',
+    ['enabled']: true,
   },
 
   ['autocraft']: {

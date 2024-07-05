@@ -6,8 +6,7 @@ import { getObjectProperty, PROPS, VARS } from "@/core";
 let initialized: boolean = false;
 
 function initializeAutocraft(): void {
-  if (initialized) return;
-  if (!settings.autocraft.enabled) return;
+  if (initialized || !settings.autocraft.enabled) return;
 
   processAutocraft();
   globalObject.setInterval(processAutocraft, 50);
@@ -24,9 +23,7 @@ export function processAutocraftSwitch(): void {
 }
 
 function processAutocraft(): void {
-  if (!initialized) return;
-  if (!getLocalAlive()) return;
-  if (!settings.autocraft.enabled) return;
+  if (!initialized || !getLocalAlive() || !settings.autocraft.enabled) return;
 
   const crafting = VARS.USER[PROPS.CRAFT][getObjectProperty(VARS.USER[PROPS.CRAFT], 'USER_CRAFTING', 4)!];
   if (crafting) return;
