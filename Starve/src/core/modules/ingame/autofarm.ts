@@ -126,7 +126,7 @@ function initializeAutofarm(): void {
   if (initialized || !settings.autofarm.enabled) return;
 
   processAutofarm();
-  globalObject.setInterval(processAutofarm, 80);
+  globalObject.setInterval(processAutofarm, 300);
 
   initialized = true;
 }
@@ -147,7 +147,6 @@ function processAutofarm(): void {
       farming = false;
 
       VARS.CLIENT[PROPS.SEND_MOVE](0);
-      VARS.CLIENT[PROPS.SEND_ANGLE](0);
       VARS.CLIENT[PROPS.STOP_ATTACK]();
     }
 
@@ -287,7 +286,6 @@ function processAutofarm(): void {
       farming = false;
 
       VARS.CLIENT[PROPS.SEND_MOVE](0);
-      VARS.CLIENT[PROPS.SEND_ANGLE](0);
       VARS.CLIENT[PROPS.STOP_ATTACK]();
     }
   }

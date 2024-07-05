@@ -8,36 +8,28 @@ import type { Hook, StrAny } from '@/core/types';
  * @param hooks - An array of tuples, each containing a string and a Hook function.
  * @returns True if all hooks are successfully applied, otherwise false.
  */
-export function hook(hooks: [string, Hook][]): boolean {
+export function hook(hooks: [string, any, Hook][]): void {
   // Check if the hooks parameter is an array.
-  if (!isArray(hooks)) return false;
+  if (!isArray(hooks)) return;
   
-  let done: boolean = false;
-  let hooked: number = 0;
   const length: number = hooks.length;
 
   // Iterate through each hook and apply it to the global object.
   for (let index: number = 0; index < length; index++) {
-    const hook: [string, Hook] = hooks[index];
+    const hook: [string, any, Hook] = hooks[index];
 
     if (hook && isArray(hook)) {
-      const [ name, obj ] = hook;
+      const [ name, prototype, obj ] = hook;
 
       try {
         // Define a property on the global object.
-        const ready = !!globalObject.Object.defineProperty(globalObject.Object.prototype, name, obj);
-        ready && hooked++; 
+        globalObject.Object.defineProperty(prototype, name, obj);
       } catch (e: any) {
         // Throw an error if hooking fails.
         throw `Hooking '${name}' failed: ${e.message}`;
       }
     }
   }
-
-  // If all hooks are successfully applied, mark as done.
-  if (hooked === length && !done) done = true;
-
-  return done;
 }
 
 // Initialize a global variable storage object.
@@ -47,21 +39,6 @@ VARS.GAME = undefined;
 VARS.WORLD = undefined;
 VARS.MOUSE = undefined;
 VARS.CLIENT = undefined;
-
-/**
- * Set a variable in the VARS object.
- *
- * @param property - The property name to set.
- * @param value - The value to set for the property.
- * @returns True if the variable is successfully set, otherwise throws an error.
- */
-export function setHookedVar(property: string, value: any): boolean {
-  if (!(property in VARS)) 
-    throw new globalObject.ReferenceError(`Cannot set var '${property}': var not found`);
-
-  VARS[property] = value;
-  return true;
-}
 
 // Initialize a properties storage object.
 export const PROPS: StrAny = {};

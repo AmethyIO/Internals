@@ -9,7 +9,7 @@ function initializeAutocraft(): void {
   if (initialized || !settings.autocraft.enabled) return;
 
   processAutocraft();
-  globalObject.setInterval(processAutocraft, 50);
+  globalObject.setInterval(processAutocraft, 100);
 
   initialized = true;
 }
