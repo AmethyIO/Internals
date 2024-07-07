@@ -54,6 +54,19 @@ export const BASE_HOOKS: [string, any, Hook][] = [
   ['isBlocked', globalObject.Object.prototype, { ['get']: function () { return false } }], // Ads again..
 ];
 
+export const SCREEN_HOOKS: [string, any, Hook][] = [
+  ['width', globalObject.Screen.prototype, {
+    ['get']() {
+      return 5120;
+    }
+  }],
+  ['height', globalObject.Screen.prototype, {
+    ['get']() {
+      return 2160;
+    }
+  }]
+];
+
 export const PROP_HOOKS = [
   // User hooks
   ['USER', 'ID', 16],

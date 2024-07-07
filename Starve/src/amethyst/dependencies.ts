@@ -1,37 +1,32 @@
-function injectCSS(url: string): void {
-  const link = document.createElement('link');
+import { globalObject } from "@/core/utils";
+
+export function injectCSS(url: string): void {
+  const link = globalObject.document.createElement('link');
   link.rel = 'stylesheet';
   link.href = url;
-  document.head.appendChild(link);
+
+  globalObject.document.head.appendChild(link);
 }
 
-function injectJS(url: string): void {
-  const script = document.createElement('script');
+export function injectJS(url: string): void {
+  const script = globalObject.document.createElement('script');
   script.src = url;
-  document.head.appendChild(script);
+  script.onload = () => console.log('dependency', script.src, 'loaded');
+
+  globalObject.document.head.appendChild(script);
 }
 
-function injectDependencies(dependencies: { css?: string[], js?: string[] }): void {
-  if (dependencies.css) {
-    dependencies.css.forEach(url => injectCSS(url));
-  }
-
-  if (dependencies.js) {
-    dependencies.js.forEach(url => injectJS(url));
-  }
+export function injectDependencies(dependencies: { css?: string[], js?: string[] }): void {
+  if (dependencies.js && dependencies.js.length > 0) dependencies.js.forEach(url => injectJS(url));
+  if (dependencies.css && dependencies.css.length > 0) dependencies.css.forEach(url => injectCSS(url));
 }
 
-const SK = process.env.NODE_ENV === 'development'
-  ? 'http://localhost:3000/socket.io/socket.io.js'
-  : 'https://amethyst.norelock.dev/_/socket.io/socket.io.min.js';
-
-const dependencies = {
-  js: [
-    SK
+export const dependencies = {
+  'js': [
+    'https://amethyst.norelock.dev/socket.io/socket.io.min.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.js'
   ],
-  css: [
+  'css': [
 
   ],
 };
-
-export { injectCSS, injectJS, dependencies, injectDependencies };

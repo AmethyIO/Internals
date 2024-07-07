@@ -1,6 +1,8 @@
 import { get } from './memory';
 import { globalObject } from '../utils';
 import type { RenderFunction } from '../types';
+import { hookFunction } from '..';
+import { settings } from '../constants';
 
 let can: HTMLCanvasElement | undefined = undefined;
 let ctx: CanvasRenderingContext2D | undefined = undefined;
@@ -12,12 +14,23 @@ let ctx: CanvasRenderingContext2D | undefined = undefined;
  */
 export function initializeCanvas(): boolean {
   // Retrieve the canvas element by its ID if it's not already defined.
-  if (!can || typeof can === 'undefined') {
+  if (!can || typeof can === 'undefined')
     can = globalObject.document.getElementById('game_canvas')! as HTMLCanvasElement;
-  }
 
   // Get the 2D rendering context from the canvas.
   ctx = can.getContext('2d')!;
+
+  // xray hook
+  ctx.drawImage = new Proxy(ctx.drawImage, {
+    apply() {
+      if (settings.xray.enabled)
+        arguments[1].globalAlpha = .5;
+
+      // @ts-ignore
+      return Reflect.apply(...arguments)
+    }
+  });
+
   return !!can;
 }
 
@@ -40,7 +53,7 @@ const drawFns: RenderFunction[] = [];  // Array to store render functions.
  *
  * @param timestamp - The current timestamp, automatically provided by requestAnimationFrame.
  */
-export function draw (timestamp: number = 0): void {
+export function draw(timestamp: number = 0): void {
   // Check if the game is ready to be drawn.
   const ready = get<boolean>('READY');
   if (!ready) return;
@@ -50,7 +63,7 @@ export function draw (timestamp: number = 0): void {
 
   // Calculate the time difference between the current and last frame.
   const ms = timestamp - last;
-  
+
   // Store the frame duration.
   frames.push(ms);
   if (frames.length > 100) frames.shift();  // Keep only the last 100 frames.
@@ -61,7 +74,7 @@ export function draw (timestamp: number = 0): void {
 
   // Update the timestamp of the last frame.
   last = timestamp;
-  
+
   // Call each render function with the rendering context and delta time.
   for (const render of drawFns) render(ctx!, delta);
 }
@@ -71,7 +84,7 @@ export function draw (timestamp: number = 0): void {
  *
  * @param renderFunction - The render function to add.
  */
-export function addToDraw (renderFunction: RenderFunction): void {
+export function addToDraw(renderFunction: RenderFunction): void {
   if (!drawFns.includes(renderFunction)) drawFns.push(renderFunction);
 }
 
@@ -80,7 +93,7 @@ export function addToDraw (renderFunction: RenderFunction): void {
  *
  * @param renderFunction - The render function to remove.
  */
-export function removeFromDraw (renderFunction: RenderFunction): void {
+export function removeFromDraw(renderFunction: RenderFunction): void {
   const index = drawFns.indexOf(renderFunction);
   if (index !== -1) drawFns.splice(index, 1);
 }

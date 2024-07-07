@@ -1,3 +1,4 @@
+import type { AmethystPlayer } from "@/amethyst/components";
 import type { StrAny } from "../types";
 
 export const GLOBAL: StrAny = {};
@@ -8,4 +9,4 @@ GLOBAL.SOCKET_UUID = undefined;
 GLOBAL.SOCKET_CURRENT_ROOM = undefined;
 GLOBAL.SOCKET_AVAILABLE_ROOMS = [];
 
-GLOBAL.AMETHYST_PLAYERS = {};
+GLOBAL.AMETHYST_PLAYERS = {} as { [pid: string]: AmethystPlayer };

@@ -23,7 +23,8 @@ export function getLocalUid() {
     if (typeof VARS.USER[PROPS.UID] !== 'undefined')
       return VARS.USER[PROPS.UID];
 
-    return getLocalId() * VARS.WORLD[PROPS.MAX_UNITS];
+    if (VARS.WORLD[PROPS.MAX_UNITS])
+      return getLocalId() * VARS.WORLD[PROPS.MAX_UNITS];
   }
 
   return 0;
@@ -36,30 +37,10 @@ export function getLocalUid() {
  */
 export function getLocalPlayer() {
   if (getLocalAlive()) {
+    const uid = getLocalUid();
+
     if (VARS.WORLD[PROPS.FAST_UNITS])
-      return VARS.WORLD[PROPS.FAST_UNITS][getLocalUid()];
-    else {
-      if (VARS.WORLD[PROPS.UNITS]) {
-        let p = getPlayerByPid(getLocalId());
-        if (p) {
-          const ps = VARS.WORLD[PROPS.UNITS][UNITS.PLAYERS];
-          const psl = ps.length;
-
-          for (let i = 0; i < psl; i++) {
-            const o = ps[i];
-            if (o) {
-              const pid = o[getObjectProperty(o, 'UNIT_PID', 2)!];
-              if (pid === p.pid) {
-                p = o;
-                break;
-              }
-            }
-          }
-
-          return p;
-        }
-      }
-    }
+      return VARS.WORLD[PROPS.FAST_UNITS][uid];
   }
 
   return undefined;
@@ -115,7 +96,7 @@ export function updatePlayers() {
       if (type !== UNITS.PLAYERS) continue;
 
       const pid = FAST_UNIT[getObjectProperty(FAST_UNIT, 'UNIT_PID', 2)!];
-      if (!getPlayerByPid(pid)) STORED_PLAYERS.push({ pid });
+      if (!getPlayerByPid(pid)) STORED_PLAYERS.push({ 'pid': pid });
 
       const obj = FAST_UNIT[getObjectProperty(FAST_UNIT, 'UNIT_OBJ', 14)!];
       if (obj) {

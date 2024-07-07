@@ -1,8 +1,9 @@
 import { extras, extras_length, getExtractorTypeName, GLOBAL, ICON_MICROPHONE, infos, settings, UNITS } from '@/core/constants';
 import { VARS, PROPS, getObjectProperty } from '@/core';
-import { getReadableTime, isArray } from '@/core/utils';
-import { getCameraPosition, getLocalAlive, getLocalId, getPlayerByPid } from '@/core/hooks';
+import { getReadableTime, globalObject, isArray } from '@/core/utils';
+import { getCameraPosition, getLocalAlive, getLocalId, getLocalPlayer, getPlayerByPid } from '@/core/hooks';
 import type { AmethystPlayer } from '@/amethyst/components';
+import { calcVolumes } from '../modules';
 
 /**
  * Draws player information on the canvas context.
@@ -82,6 +83,13 @@ export function drawRealtimePlayerInfo(context: CanvasRenderingContext2D): void 
   // Check if the local player is alive
   if (!getLocalAlive()) return;
 
+  const localPlayer = getLocalPlayer();
+  if (!localPlayer) return;
+
+  // get localplayer pos
+  const lx = localPlayer[getObjectProperty(localPlayer, 'UNIT_X', 4)!];
+  const ly = localPlayer[getObjectProperty(localPlayer, 'UNIT_Y', 5)!];
+
   // Get camera position
   const [cam_x, cam_y] = getCameraPosition();
 
@@ -111,11 +119,39 @@ export function drawRealtimePlayerInfo(context: CanvasRenderingContext2D): void 
 
     if (player) {
       const pid = player[getObjectProperty(player, 'UNIT_PID', 2)!];
-      const realtime = GLOBAL.AMETHYST_PLAYERS[pid];
+      const realtime = GLOBAL.AMETHYST_PLAYERS[pid] as AmethystPlayer;
 
       if (realtime) {
         const x = player[getObjectProperty(player, 'UNIT_X', 4)!];
         const y = player[getObjectProperty(player, 'UNIT_Y', 5)!];
+
+        // Draw voice
+        if (settings.voicechat.enabled) {
+          if (realtime.stream) {
+            const [left, right] = calcVolumes({ x: lx, y: ly }, realtime.position);
+            realtime.stream.setVolume(left, right);
+            realtime.voiceActivity = realtime.stream.getVoiceActivity();
+            console.log(realtime.voiceActivity);
+
+            context.save();
+              // Background
+              context.globalAlpha = 0.45;
+              context.drawImage(ICON_MICROPHONE, (x - 25) + cam_x, (y - (ICON_MICROPHONE.height - 25)) + cam_y, 166, 70);
+
+              // When talking
+              const TALK_HEIGHT = 70 * globalObject.Math.min(1, globalObject.Math.max(0, realtime.voiceActivity || 1));
+              console.log(TALK_HEIGHT);
+              context.globalAlpha = 1;
+
+              // Draw only a section of the image to indicate voice activity
+              context.drawImage(
+                ICON_MICROPHONE,
+                0, 70 - TALK_HEIGHT, 166, TALK_HEIGHT, // Source rectangle: x, y, width, height
+                (x - 25) + cam_x, (y - (ICON_MICROPHONE.height - 25) + (70 - TALK_HEIGHT)) + cam_y, 166, TALK_HEIGHT // Destination rectangle: x, y, width, height
+              );
+            context.restore();
+          }
+        }
 
         // Draw multiple lines of player information
         const text = infos['prealtime']['strings'];
@@ -127,10 +163,10 @@ export function drawRealtimePlayerInfo(context: CanvasRenderingContext2D): void 
           for (let j = 0; j < text_length; j++) {
             // Replace placeholders with actual values
             const t = text[j]
-              .replace('$water', `${realtime.water}%`)
-              .replace('$health', `${realtime.health}%`)
-              .replace('$hunger', `${realtime.hunger}%`)
-              .replace('$temperature', `${realtime.temperature}%`);
+              .replace('$water', `${~~(realtime.water)}%`)
+              .replace('$health', `${~~(realtime.health)}%`)
+              .replace('$hunger', `${~~(realtime.hunger)}%`)
+              .replace('$temperature', `${~~(realtime.temperature)}%`);
 
             // Draw text on canvas
             context.strokeText(t, x + cam_x, (y + cam_y - 50) + text_y);

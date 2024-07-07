@@ -83,9 +83,11 @@
   "target": "web",
   "dependencies": {
     "@types/node": "^20.14.6",
+    "@types/peerjs": "^1.1.0",
     "devtools-detector": "^2.0.18",
     "goober": "^2.1.14",
     "guify": "^0.15.1",
+    "peerjs": "^1.5.4",
     "socket.io-client": "^4.7.5"
   }
 }

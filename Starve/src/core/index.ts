@@ -11,7 +11,7 @@ import type { Hook, StrAny } from '@/core/types';
 export function hook(hooks: [string, any, Hook][]): void {
   // Check if the hooks parameter is an array.
   if (!isArray(hooks)) return;
-  
+
   const length: number = hooks.length;
 
   // Iterate through each hook and apply it to the global object.
@@ -19,7 +19,7 @@ export function hook(hooks: [string, any, Hook][]): void {
     const hook: [string, any, Hook] = hooks[index];
 
     if (hook && isArray(hook)) {
-      const [ name, prototype, obj ] = hook;
+      const [name, prototype, obj] = hook;
 
       try {
         // Define a property on the global object.
@@ -60,7 +60,7 @@ export function getVarProperty(hookedVar: string, defineAs: string, index: numbe
 
   if (!(defineAs in PROPS))
     PROPS[defineAs] = undefined;
-  
+
   if (typeof PROPS[defineAs] === 'undefined') {
     let prop: string = '';
     let counter: number = 0;
@@ -105,7 +105,7 @@ export function getObjectProperty(obj: any, defineAs: string, index: number = 1)
   if (!(defineAs in o)) {
     let counter: number = 0;
     let property: string | undefined = undefined;
-  
+
     // Iterate through the properties of the object to find the specified index.
     for (const prop in obj) {
       counter++;
@@ -120,4 +120,57 @@ export function getObjectProperty(obj: any, defineAs: string, index: number = 1)
   }
 
   return o[defineAs];
+}
+
+// A map to store the relationship between original functions and their proxies
+const hookedFunctions = new globalObject.Map<Function, Function>();
+
+/**
+ * Hooks a given function by replacing it with a proxy that calls the hook function first.
+ * @param originalFunction - The function to be hooked.
+ * @param hookFunction - The hook function to be called before the original function.
+ * @returns True if the function was successfully hooked, false if it was already hooked.
+ * @throws Will throw an error if the function pointer or hook function is invalid.
+ */
+export function hookFunction(originalFunction: Function, hookFunction: Function): boolean {
+  if (!originalFunction || !hookFunction)
+    throw new globalObject.ReferenceError('Invalid function pointer or hook function');
+
+  if (hookedFunctions.has(originalFunction))
+    return false; // Function is already hooked
+
+  const proxy = new globalObject.Proxy(originalFunction, {
+    'apply': (target, thisArg, argumentsList) => {
+      return hookFunction.apply(thisArg, [target.bind(thisArg), ...argumentsList]);
+    }
+  });
+
+  hookedFunctions.set(originalFunction, proxy);
+  return true;
+}
+
+/**
+ * Unhooks a previously hooked function, restoring it to its original state.
+ * @param originalFunction - The function to be unhooked.
+ * @returns True if the function was successfully unhooked, false if it was not hooked.
+ * @throws Will throw an error if the function pointer is invalid.
+ */
+export function unhookFunction(originalFunction: Function): boolean {
+  if (!originalFunction)
+    throw new globalObject.ReferenceError('Invalid function pointer');
+
+  if (!hookedFunctions.has(originalFunction))
+    return false; // Function is not hooked
+
+  hookedFunctions.delete(originalFunction);
+  return true;
+}
+
+/**
+ * Retrieves the currently hooked version of a function if it exists, or the original function if it doesn't.
+ * @param originalFunction - The function to be retrieved.
+ * @returns The hooked version of the function if it exists, otherwise the original function.
+ */
+export function getHookedFunction(originalFunction: Function): Function {
+  return hookedFunctions.get(originalFunction) || originalFunction;
 }

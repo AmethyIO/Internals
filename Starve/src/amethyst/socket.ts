@@ -65,9 +65,7 @@ export async function initializeSocket(): Promise<void> {
       const protocol = GLOBAL.API_HOST.includes('localhost') ? 'http://' : 'https://';
 
       socket = (globalObject as any).io(protocol + GLOBAL.API_HOST, SOCKET_OPTIONS) as Socket;
-
-      console.log(protocol + GLOBAL.API_HOST);
-
+      
       for (let index: number = 0; index < SOCKET_EVENTS_LENGTH; index++) {
         const event = SOCKET_EVENTS[index];
         if (event) {

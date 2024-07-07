@@ -1,4 +1,9 @@
 export const settings = {
+  ['xray']: {
+    ['keybind']: 'KeyE',
+    ['enabled']: false
+  },
+
   ['autofarm']: {
     ['keybind']: 'KeyU',
     ['enabled']: false,

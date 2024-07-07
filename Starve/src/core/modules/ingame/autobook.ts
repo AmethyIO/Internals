@@ -1,7 +1,7 @@
-import { globalObject } from "@/core/utils";
 import { getLocalPlayer } from "@/core/hooks";
-import { getObjectProperty, PROPS, VARS } from "@/core";
+import { getObjectProperty, hookFunction, PROPS, VARS } from "@/core";
 import { settings, GLOBAL, INVENTORY_ID } from "@/core/constants";
+import { globalObject } from "@/core/utils";
 
 let localPlayer: any | undefined = undefined;
 
@@ -26,7 +26,7 @@ export function initializeAutobook(): void {
 
     if (settings.autobook.enabled)
       selectBook();
-
+    
     VARS.CLIENT[PROPS.SOCKET]['send'](globalObject.JSON.stringify([26, id]));
   }
 }

@@ -7,7 +7,7 @@ function decimalToBase24(num: number) {
   while (num > 0) {
     let remainder = num % 24;
     base24 = base24Chars[remainder] + base24;
-    num = Math.floor(num / 24);
+    num = ~~(num / 24);
   }
   return base24 || '0';
 }

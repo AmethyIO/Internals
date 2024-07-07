@@ -1,10 +1,11 @@
 import { GLOBAL } from "@/core/constants";
 import { getSocket } from "../socket";
 import { getLocalId } from "@/core/hooks";
-import { globalObject, sleep } from "@/core/utils";
+import { sleep } from "@/core/utils";
 import { AmethystPlayer } from "../components";
+import { callVoicePeer, destroyVoicePeer, initializeVoicePeer } from "@/core/modules";
 
-function socketJoinedRoom([ room = '', players = [] ]): void {
+function socketJoinedRoom([room = '', players = []]): void {
   const socket = getSocket();
   if (!socket) return;
 
@@ -16,18 +17,29 @@ function socketJoinedRoom([ room = '', players = [] ]): void {
     const player = players[index] as any;
 
     if (player) {
-      GLOBAL.AMETHYST_PLAYERS[player.gpid] = new AmethystPlayer(player.gpid, player.uuid, player.water, player.health, player.hunger, player.temperature, player.position);
+      if (!(player.gpid in GLOBAL.AMETHYST_PLAYERS)) {
+        GLOBAL.AMETHYST_PLAYERS[player.gpid] = new AmethystPlayer(player.gpid, player.uuid, player.pos);
+        const obj = GLOBAL.AMETHYST_PLAYERS[player.gpid] as AmethystPlayer;
+
+        obj.water = player.water;
+        obj.health = player.health;
+        obj.hunger = player.hunger;
+        obj.peerId = `${player.uuid}_${room}`;
+        obj.temperature = player.temperature;
+
+        if (player.gpid !== getLocalId()) callVoicePeer(obj.peerId);
+      }
     }
   }
+
+  initializeVoicePeer();
 }
 
 export function socketLeaveRoom(): void {
   const socket = getSocket();
   if (!socket) return;
 
-  if (globalObject.Object.keys(GLOBAL.AMETHYST_PLAYERS).length > 0)
-    GLOBAL.AMETHYST_PLAYERS = {};
-
+  destroyVoicePeer();
   socket.emit('leave');
 }
 
