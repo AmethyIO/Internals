@@ -1,11 +1,10 @@
 import { GLOBAL } from "@/core/constants";
-import { globalObject, sleep } from "@/core/utils";
 import { socketConnected, socketHandshaked, socketPlayerJoin, socketPlayerLeft, socketUpdatePlayers, socketUpdater } from "./socket-packets";
 
-import { type ManagerOptions, type Socket, type SocketOptions } from "socket.io-client";
+import { type ManagerOptions, type Socket, type SocketOptions, io } from "socket.io-client";
 
 const SOCKET_EVENTS: any[] = [
-  ['leave', function() {
+  ['leave', function () {
     if (GLOBAL.SOCKET_CURRENT_ROOM !== undefined)
       GLOBAL.SOCKET_CURRENT_ROOM = undefined;
   }],
@@ -21,7 +20,6 @@ const SOCKET_OPTIONS: Partial<ManagerOptions & SocketOptions> = {
 };
 const SOCKET_EVENTS_LENGTH = SOCKET_EVENTS.length;
 
-let _ready: boolean = false;
 let socket: Socket | undefined = undefined;
 let initialized: boolean = false;
 
@@ -33,7 +31,7 @@ export function getSocket(): Socket | undefined {
 }
 
 export function isSocketReady(): boolean {
-  return _ready && initialized && !!socket;
+  return initialized && !!socket;
 }
 
 export function destroySocket(): void {
@@ -58,23 +56,15 @@ export async function initializeSocket(): Promise<void> {
   if (isSocketReady())
     return;
 
-  while (!_ready) {
-    await sleep(50);
+  const protocol = GLOBAL.API_HOST.includes('localhost') ? 'http://' : 'https://';
 
-    if ('io' in globalObject) {
-      const protocol = GLOBAL.API_HOST.includes('localhost') ? 'http://' : 'https://';
+  socket = io(protocol + GLOBAL.API_HOST, SOCKET_OPTIONS) as Socket;
 
-      socket = (globalObject as any).io(protocol + GLOBAL.API_HOST, SOCKET_OPTIONS) as Socket;
-      
-      for (let index: number = 0; index < SOCKET_EVENTS_LENGTH; index++) {
-        const event = SOCKET_EVENTS[index];
-        if (event) {
-          const [name, fn] = event;
-          socket.on(name, fn);
-        }
-      }
-
-      _ready = true;
+  for (let index: number = 0; index < SOCKET_EVENTS_LENGTH; index++) {
+    const event = SOCKET_EVENTS[index];
+    if (event) {
+      const [name, fn] = event;
+      socket.on(name, fn);
     }
   }
 

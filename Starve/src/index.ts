@@ -1,11 +1,10 @@
-import { addToDraw, draw, get, initializeCanvas, initializeVoiceModule, processAutocraftSwitch, processAutofarmSwitch, set, TO_INITIALIZE_WITHOUT_ENABLING, TO_INITIALIZE_WITHOUT_ENABLING_L } from './core/modules';
+import { addToDraw, draw, get, initializeCanvas, processAutocraftSwitch, processAutofarmSwitch, set, TO_INITIALIZE_WITHOUT_ENABLING, TO_INITIALIZE_WITHOUT_ENABLING_L } from './core/modules';
 import { BASE_HOOKS, GLOBAL, hookAllProperties, SCREEN_HOOKS, settings } from './core/constants';
 import { globalObject, sleep } from './core/utils';
 import { VARS, PROPS, hook, getObjectProperty } from './core';
 import { DRAWERS } from './core/drawers';
 import { getLocalAlive, getLocalId, getLocalPlayer } from './core/hooks';
 import { initializeSocket } from './amethyst';
-import { dependencies, injectDependencies } from './amethyst/dependencies';
 import type { AmethystPlayer } from './amethyst/components';
 
 function applyDraws() {
@@ -48,16 +47,6 @@ function processKeyboardDown(e: KeyboardEvent): void {
   if (!getLocalAlive()) return;
   if (VARS.USER[PROPS.CHAT][getObjectProperty(VARS.USER[PROPS.CHAT], 'USER_CHAT_OPEN', 1)!]) return;
   if (VARS.USER[PROPS.TERMINAL][getObjectProperty(VARS.USER[PROPS.CHAT], 'USER_TERMINAL_OPEN', 1)!]) return;
-
-  if (e.code === settings.voicechat.keybind && !settings.voicechat.talking) {
-    const id = globalObject.String(getLocalId());
-    const player = GLOBAL.AMETHYST_PLAYERS[id] as AmethystPlayer;
-
-    if (player && player.stream) {
-      settings.voicechat.talking = true;
-      player.stream!.unmute();
-    }
-  }
 
   if (e.code === settings.xray.keybind) settings.xray.enabled = !settings.xray.enabled;
 
@@ -108,16 +97,6 @@ function processKeyboardUp(e: KeyboardEvent): void {
   if (!getLocalAlive()) return;
   if (VARS.USER[PROPS.CHAT][getObjectProperty(VARS.USER[PROPS.CHAT], 'USER_CHAT_OPEN', 1)!]) return;
   if (VARS.USER[PROPS.TERMINAL][getObjectProperty(VARS.USER[PROPS.CHAT], 'USER_TERMINAL_OPEN', 1)!]) return;
-
-  if (e.code === settings.voicechat.keybind && settings.voicechat.talking) {
-    const id = globalObject.String(getLocalId());
-    const player = GLOBAL.AMETHYST_PLAYERS[id] as AmethystPlayer;
-
-    if (player && player.stream) {
-      settings.voicechat.talking = false;
-      player.stream!.mute();
-    }
-  }
 }
 
 function readyCallback() {
@@ -134,7 +113,6 @@ function readyCallback() {
   applyDraws();
   hookAllProperties();
   applyEnabledAutos();
-  initializeVoiceModule();
 
   globalObject.addEventListener('keyup', processKeyboardUp, false);
   globalObject.addEventListener('keydown', processKeyboardDown, false);

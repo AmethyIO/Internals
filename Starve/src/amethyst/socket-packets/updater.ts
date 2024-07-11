@@ -1,10 +1,11 @@
 import { getObjectProperty, PROPS, VARS } from "@/core";
 import { getSocket } from "../socket";
-import { globalObject, isArray } from "@/core/utils";
+import { globalObject, isArray, smoothTween } from "@/core/utils";
 import { GLOBAL, UNITS } from "@/core/constants";
 import { socketJoinRoom, socketLeaveRoom } from "./room";
 import { getLocalAlive, getLocalPlayer } from "@/core/hooks";
 import type { AmethystPlayer } from "../components";
+import { getDelta } from "@/core/modules";
 
 function getWSPath(url: string): string {
   const protocolEndIndex = url.indexOf('://') + 3;
@@ -13,7 +14,9 @@ function getWSPath(url: string): string {
   if (firstSlashIndex === -1)
     return '';
 
-  return url.substring(firstSlashIndex).replace('/', '');
+  const [ a, b ] = url.substring(firstSlashIndex).replace('/', '').split('?');
+
+  return a;
 }
 
 export function socketUpdatePlayers(players: any[]) {
@@ -37,12 +40,19 @@ export function socketUpdatePlayers(players: any[]) {
     const world_player = world_players.find((p: { [x: string]: any; }) => p && p[getObjectProperty(p, 'UNIT_PID', 2)!] === globalObject.Number(pid));
 
     if (player && world_player) {
-      const obj = realtime[pid];
+      const obj = realtime[pid] as AmethystPlayer;
 
-      obj.water = player.water;
-      obj.health = player.health;
-      obj.hunger = player.hunger;
-      obj.temperature = player.temperature;
+      obj.updateInfo(player);
+      // obj.water = player.water;
+      // obj.health = player.health;
+      // obj.hunger = player.hunger;
+      // obj.temperature = player.temperature;
+      // console.log('player', player, 'obj', obj);
+
+      // for (let i = 0; i < props.length; i++) {
+      //   const prop = props[i];
+      //   if (obj[prop]) smoothTween(player[prop], obj[prop], getDelta(), function(v: number) { obj[prop] = v; }) 
+      // }
     }
   }
 }

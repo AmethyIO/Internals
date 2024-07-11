@@ -18,9 +18,9 @@ const plugins = [cleanWebpackPlugin];
  * Webpack production configuration.
  */
 const WebpackConfig = {
-  externals: {
-    "socket.io-client": "window",
-  },
+  // externals: {
+  //   "socket.io-client": "window",
+  // },
   optimization: {
     minimize: false,
     minimizer: [
@@ -30,20 +30,20 @@ const WebpackConfig = {
     
     usedExports: true,
 
-    // splitChunks: {
-    //   chunks: 'all', // Split chunks for all types of code
-    //   cacheGroups: {
-    //     defaultVendors: {
-    //       test: /[\\/]node_modules[\\/]/, // Target node_modules directory
-    //       name: 'common',
-    //       chunks: 'all',
-    //     },
-    //     default: {
-    //       priority: -20,
-    //       reuseExistingChunk: true,
-    //     },
-    //   },
-    // },
+    splitChunks: {
+      chunks: 'all', // Split chunks for all types of code
+      cacheGroups: {
+        defaultVendors: {
+          test: /[\\/]node_modules[\\/]/, // Target node_modules directory
+          name: 'common',
+          chunks: 'all',
+        },
+        default: {
+          priority: -20,
+          reuseExistingChunk: true,
+        },
+      },
+    },
   },
   plugins,
 };

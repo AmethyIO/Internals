@@ -1,4 +1,3 @@
-export * from './voice';
 export * from './autofarm';
 export * from './autocraft';
 

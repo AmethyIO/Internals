@@ -3,7 +3,6 @@ import { getSocket } from "../socket";
 import { getLocalId } from "@/core/hooks";
 import { sleep } from "@/core/utils";
 import { AmethystPlayer } from "../components";
-import { callVoicePeer, destroyVoicePeer, initializeVoicePeer } from "@/core/modules";
 
 function socketJoinedRoom([room = '', players = []]): void {
   const socket = getSocket();
@@ -24,22 +23,16 @@ function socketJoinedRoom([room = '', players = []]): void {
         obj.water = player.water;
         obj.health = player.health;
         obj.hunger = player.hunger;
-        obj.peerId = `${player.uuid}_${room}`;
         obj.temperature = player.temperature;
-
-        if (player.gpid !== getLocalId()) callVoicePeer(obj.peerId);
       }
     }
   }
-
-  initializeVoicePeer();
 }
 
 export function socketLeaveRoom(): void {
   const socket = getSocket();
   if (!socket) return;
 
-  destroyVoicePeer();
   socket.emit('leave');
 }
 
