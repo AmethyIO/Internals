@@ -48,7 +48,7 @@ function processKeyboardDown(e: KeyboardEvent): void {
   if (VARS.USER[PROPS.CHAT][getObjectProperty(VARS.USER[PROPS.CHAT], 'USER_CHAT_OPEN', 1)!]) return;
   if (VARS.USER[PROPS.TERMINAL][getObjectProperty(VARS.USER[PROPS.CHAT], 'USER_TERMINAL_OPEN', 1)!]) return;
 
-  if (e.code === settings.xray.keybind) settings.xray.enabled = !settings.xray.enabled;
+  if (e.code === settings.xray.keybind && !settings.xray.enabled) settings.xray.enabled = !settings.xray.enabled;
 
   if (e.code === settings.autofarm.keybind) {
     settings.autofarm.enabled = !settings.autofarm.enabled;
@@ -97,6 +97,8 @@ function processKeyboardUp(e: KeyboardEvent): void {
   if (!getLocalAlive()) return;
   if (VARS.USER[PROPS.CHAT][getObjectProperty(VARS.USER[PROPS.CHAT], 'USER_CHAT_OPEN', 1)!]) return;
   if (VARS.USER[PROPS.TERMINAL][getObjectProperty(VARS.USER[PROPS.CHAT], 'USER_TERMINAL_OPEN', 1)!]) return;
+
+  if (e.code === settings.xray.keybind && settings.xray.enabled) settings.xray.enabled = !settings.xray.enabled;
 }
 
 function readyCallback() {

@@ -28,10 +28,4 @@ export const settings = {
     ['keybind']: 'KeyC',
     ['enabled']: false
   },
-
-  ['voicechat']: {
-    ['keybind']: 'KeyV',
-    ['enabled']: true,
-    ['talking']: false
-  }
 };
